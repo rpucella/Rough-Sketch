@@ -7,6 +7,11 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do" rel="stylesheet">
             <style>
+                body {
+                    padding: 8px;
+                    user-select: none;
+                }
+                
                 svg text {
                     font-family: Nothing You Could Do;
                     font-display: block;
@@ -16,7 +21,7 @@
     
 
 <main>
-    <h1>Rough Sketch</h1>
+    <div class="title">Rough Sketch</div>
 
     <Sketchpad diagram={{
                    height: 400,
@@ -28,11 +33,11 @@
                        },
                        {
                            type: 'circle',
-                           box: [50, 50, 200, 200]
+                           box: [310, 10, 400, 90]
                        },
                        {
                            type: 'circle',
-                           box: [70, 70, 200, 200]
+                           box: [350, 10, 500, 100]
                        },
                        {
                            type: 'text',
@@ -44,24 +49,15 @@
 </main>
 
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+    main div.title {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+	text-align: center;
+	color: #ff3e00;
+	text-transform: uppercase;
+	font-size: 3em;
+	font-weight: 100;
+    }
 </style>
 
