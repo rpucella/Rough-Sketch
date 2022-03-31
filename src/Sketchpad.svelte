@@ -5,7 +5,8 @@
     // How to draw:
     // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
-    import rough from "roughjs/bin/rough";
+    import rough from "roughjs/bin/rough"
+    import Menu from "./Menu.svelte"
     // npm i roughjs@4.0.4
     // https://roughjs.com/
     let roughSvg
@@ -19,37 +20,63 @@
     let drawing = false
     let startX
     let startY
+    let endX
+    let endY
     let drawer
+    let showMenu
 
     function handleMouseDown(evt) {
         /// console.log(evt.clientX, evt.clientY)
-        drawing = true
-        startX = evt.clientX - svgX
-        startY = evt.clientY - svgY
-        // Use an actual bona fide rectangle that we can modify as we go!
-        drawer = document.createElementNS(xmlns, 'rect')
-        drawer.setAttribute('x', startX)
-        drawer.setAttribute('y', startY)
-        drawer.setAttribute('width', 1)
-        drawer.setAttribute('height', 1)
-        drawer.setAttribute('stroke', '#ff3e00')
-        drawer.setAttribute('stroke-dasharray', '5 10')
-        drawer.setAttribute('fill', 'none')
-        svgNode.appendChild(drawer)
+        if (!showMenu) {
+            drawing = true
+            startX = evt.clientX - svgX
+            startY = evt.clientY - svgY
+            // Use an actual bona fide rectangle that we can modify as we go!
+            drawer = document.createElementNS(xmlns, 'rect')
+            drawer.setAttribute('x', startX)
+            drawer.setAttribute('y', startY)
+            drawer.setAttribute('width', 1)
+            drawer.setAttribute('height', 1)
+            drawer.setAttribute('stroke', '#ff3e00')
+            drawer.setAttribute('stroke-dasharray', '5 10')
+            drawer.setAttribute('fill', 'none')
+            svgNode.appendChild(drawer)
+        }
     }
 
+    function handleMenuCancel() {
+        drawer.remove()
+        showMenu = false
+    }
+
+    function handleMenuRectangle() {
+        drawer.remove()
+        const obj = {
+            type: 'rectangle',
+            box: [startX, startY, endX, endY]
+        }
+        diagram.objects.push(obj)
+        drawObject(obj)
+        showMenu = false
+    }        
+
+    function handleMenuCircle() {
+        drawer.remove()
+        const obj = {
+            type: 'circle',
+            box: [startX, startY, endX, endY]
+        }
+        diagram.objects.push(obj)
+        drawObject(obj)
+        showMenu = false
+    }        
+    
     function handleMouseUp(evt) {
         if (drawing) {
-            drawer.remove()
             drawing = false
-            const endX = evt.clientX - svgX
-            const endY = evt.clientY - svgY
-            const obj = {
-                type: 'rectangle',
-                box: [startX, startY, endX, endY]
-            }
-            diagram.objects.push(obj)
-            drawObject(obj)
+            endX = evt.clientX - svgX
+            endY = evt.clientY - svgY
+            showMenu = [endX, endY]
             ///console.log(diagram)
         }
     }
@@ -75,28 +102,32 @@
     }
 
     function drawObject(obj) {
-            let r
-            switch (obj.type) {
-            case 'rectangle':
-                // Set fill to white or something...
-                r = roughSvg.rectangle(obj.box[0], obj.box[1], obj.box[2] - obj.box[0], obj.box[3] - obj.box[1])
-                break
-            case 'circle':
-                r = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, (obj.box[2] - obj.box[0]) / 2)
-                break
-            case 'text':
-                r = document.createElementNS(xmlns, 'text')
-                r.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
-                r.setAttribute('y', (obj.box[3] + obj.box[1]) / 2)
-                r.setAttribute('dy', '0.35em')
-                r.setAttribute('text-anchor', 'middle')
-                r.setAttribute('font-size', '36px')
-                const txt = document.createTextNode(obj.text)
-                r.appendChild(txt)
-            }
-            if (r) {
-                svgNode.appendChild(r)
-            }
+        let r
+        const width = Math.abs(obj.box[2] - obj.box[0])
+        const height = Math.abs(obj.box[3] - obj.box[1])
+        const left = Math.min(obj.box[0], obj.box[2])
+        const top = Math.min(obj.box[1], obj.box[3])
+        switch (obj.type) {
+        case 'rectangle':
+            // Set fill to white or something...
+            r = roughSvg.rectangle(left, top, width, height)
+            break
+        case 'circle':
+            r = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
+            break
+        case 'text':
+            r = document.createElementNS(xmlns, 'text')
+            r.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
+            r.setAttribute('y', (obj.box[3] + obj.box[1]) / 2)
+            r.setAttribute('dy', '0.35em')
+            r.setAttribute('text-anchor', 'middle')
+            r.setAttribute('font-size', '36px')
+            const txt = document.createTextNode(obj.text)
+            r.appendChild(txt)
+        }
+        if (r) {
+            svgNode.appendChild(r)
+        }
     }
 
     function action(node) {
@@ -116,6 +147,16 @@
     on:mousemove={handleMouseMove}
     on:mouseleave={handleMouseOut}
     use:action />
+
+{#if showMenu}
+    <Menu
+        x={showMenu[0]}
+        y={showMenu[1]}
+        cancel={handleMenuCancel}
+        makeRectangle={handleMenuRectangle}
+        makeCircle={handleMenuCircle}
+    />
+{/if}
 
 <style>
   svg {
