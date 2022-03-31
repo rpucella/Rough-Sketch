@@ -4,14 +4,14 @@
     export let x
     export let y
     export let cancel
-    export let makeRectangle
-    export let makeCircle
+    export let makeObject
     
 </script>
 
 <div class="menu" style:--position-x={x} style:--position-y={y}>
-    <div class="option" on:click={makeRectangle}>Rectangle</div>
-    <div class="option" on:click={makeCircle}>Circle</div>
+    <div class="option" on:click={() => makeObject('rectangle')}>Rectangle</div>
+    <div class="option" on:click={() => makeObject('circle')}>Circle</div>
+    <div class="option" on:click={() => makeObject('line')}>Line</div>
     <div class="option" on:click={cancel}>Cancel</div>
 </div>
 

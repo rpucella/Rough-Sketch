@@ -49,10 +49,10 @@
         showMenu = false
     }
 
-    function handleMenuRectangle() {
+    function handleMenuObject(typ) {
         drawer.remove()
         const obj = {
-            type: 'rectangle',
+            type: typ,
             box: [startX, startY, endX, endY]
         }
         diagram.objects.push(obj)
@@ -115,6 +115,9 @@
         case 'circle':
             r = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
             break
+        case 'line':
+            r = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+            break
         case 'text':
             r = document.createElementNS(xmlns, 'text')
             r.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
@@ -124,6 +127,7 @@
             r.setAttribute('font-size', '36px')
             const txt = document.createTextNode(obj.text)
             r.appendChild(txt)
+            break
         }
         if (r) {
             svgNode.appendChild(r)
@@ -153,8 +157,7 @@
         x={showMenu[0]}
         y={showMenu[1]}
         cancel={handleMenuCancel}
-        makeRectangle={handleMenuRectangle}
-        makeCircle={handleMenuCircle}
+        makeObject={handleMenuObject}
     />
 {/if}
 
