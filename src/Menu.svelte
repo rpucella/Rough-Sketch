@@ -12,6 +12,7 @@
     <div class="option" on:click={() => makeObject('rectangle')}>Rectangle</div>
     <div class="option" on:click={() => makeObject('circle')}>Circle</div>
     <div class="option" on:click={() => makeObject('line')}>Line</div>
+    <div class="option" on:click={() => makeObject('arrow')}>Arrow</div>
     <div class="option" on:click={cancel}>Cancel</div>
 </div>
 

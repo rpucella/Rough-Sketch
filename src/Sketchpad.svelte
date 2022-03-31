@@ -32,6 +32,7 @@
             startX = evt.clientX - svgX
             startY = evt.clientY - svgY
             // Use an actual bona fide rectangle that we can modify as we go!
+            // Maybe make use of a more general box that shows guides for circles/lines/rectangles?
             drawer = document.createElementNS(xmlns, 'rect')
             drawer.setAttribute('x', startX)
             drawer.setAttribute('y', startY)
@@ -102,7 +103,6 @@
     }
 
     function drawObject(obj) {
-        let r
         const width = Math.abs(obj.box[2] - obj.box[0])
         const height = Math.abs(obj.box[3] - obj.box[1])
         const left = Math.min(obj.box[0], obj.box[2])
@@ -110,27 +110,34 @@
         switch (obj.type) {
         case 'rectangle':
             // Set fill to white or something...
-            r = roughSvg.rectangle(left, top, width, height)
+            const rr = roughSvg.rectangle(left, top, width, height)
+            svgNode.appendChild(rr)
             break
         case 'circle':
-            r = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
+            const rc = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
+            svgNode.appendChild(rc)
             break
         case 'line':
-            r = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+            const rl = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+            svgNode.appendChild(rl)
             break
+        case 'arrow':
+            const ra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+            const r1 = roughSvg.circle(obj.box[2], obj.box[3], 10)
+            svgNode.appendChild(ra)
+            svgNode.appendChild(r1)
+            break;
         case 'text':
-            r = document.createElementNS(xmlns, 'text')
-            r.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
-            r.setAttribute('y', (obj.box[3] + obj.box[1]) / 2)
-            r.setAttribute('dy', '0.35em')
-            r.setAttribute('text-anchor', 'middle')
-            r.setAttribute('font-size', '36px')
+            const rt = document.createElementNS(xmlns, 'text')
+            rt.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
+            rt.setAttribute('y', (obj.box[3] + obj.box[1]) / 2)
+            rt.setAttribute('dy', '0.35em')
+            rt.setAttribute('text-anchor', 'middle')
+            rt.setAttribute('font-size', '36px')
             const txt = document.createTextNode(obj.text)
-            r.appendChild(txt)
+            rt.appendChild(txt)
+            svgNode.appendChild(rt)
             break
-        }
-        if (r) {
-            svgNode.appendChild(r)
         }
     }
 
