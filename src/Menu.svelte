@@ -11,7 +11,7 @@
   let chars = []
   let text = ''
 
-  document.addEventListener('keydown', (evt) => {
+  function handleKey(evt){
     evt.preventDefault()
     if (evt.key.length == 1 || (evt.key.length > 1 && /[^a-zA-Z0-9]/.test(evt.key))) {
       chars.push(evt.key)
@@ -28,10 +28,11 @@
     } else if (evt.key === 'Escape') {
       cancel()
     }
-  })
+  }
 
-  onDestroy(() => {
-  })
+  document.addEventListener('keydown', handleKey)
+
+  onDestroy(() => { document.removeEventListener('keydown', handleKey) })
   
 </script>
 

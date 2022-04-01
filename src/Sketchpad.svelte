@@ -7,10 +7,8 @@
 
   import rough from "roughjs/bin/rough"
   import Menu from "./Menu.svelte"
-  // TODO: turn these into an object passing in startX startY svgNode, etc.
-  // import { makeGuides, moveGuides, updateGuidesText, removeGuides } from './guides.js'
-  // npm i roughjs@4.0.4
-  // https://roughjs.com/
+  import { Guides } from './guides.js'
+  
   let roughSvg
   let svgNode
   let svgX
@@ -19,188 +17,41 @@
   
   const xmlns = "http://www.w3.org/2000/svg"
 
-  let drawing = false
   let hovering = -1       // Index of what we're hovering over. Set to -1 for nothing.
   let startX
   let startY
   let endX
   let endY
-  let drawer
+  let guides = null       // Gets a value when drawing
   let showMenu
 
-  function makeGuides(x, y) {
-    // Use an actual bona fide rectangle that we can modify as we go!
-    // Maybe make use of a more general box that shows guides for circles/lines/rectangles?
-    drawer = document.createElementNS(xmlns, 'g')
-    svgNode.appendChild(drawer)
-    const rect = document.createElementNS(xmlns, 'rect')
-    drawer.appendChild(rect)
-    rect.setAttribute('id', 'rect')
-    rect.setAttribute('x', startX)
-    rect.setAttribute('y', startY)
-    rect.setAttribute('width', 0)
-    rect.setAttribute('height', 0)
-    rect.setAttribute('stroke', '#ff3e00')
-    rect.setAttribute('stroke-dasharray', '5 10')
-    rect.setAttribute('fill', 'none')
-    const line1 = document.createElementNS(xmlns, 'line')
-    drawer.appendChild(line1)
-    line1.setAttribute('id', 'line1')
-    line1.setAttribute('x1', startX)
-    line1.setAttribute('y1', startY)
-    line1.setAttribute('x2', startX)
-    line1.setAttribute('y2', startY)
-    line1.setAttribute('stroke', '#ff3e00')
-    line1.setAttribute('stroke-dasharray', '5 10')
-    line1.setAttribute('fill', 'none')
-    const line2 = document.createElementNS(xmlns, 'line')
-    drawer.appendChild(line2)
-    line2.setAttribute('id', 'line2')
-    line2.setAttribute('x1', startX)
-    line2.setAttribute('y1', startY)
-    line2.setAttribute('x2', startX)
-    line2.setAttribute('y2', startY)
-    line2.setAttribute('stroke', '#ff3e00')
-    line2.setAttribute('stroke-dasharray', '5 10')
-    line2.setAttribute('fill', 'none')
-    const line3 = document.createElementNS(xmlns, 'line')
-    drawer.appendChild(line3)
-    line3.setAttribute('id', 'line3')
-    line3.setAttribute('x1', startX)
-    line3.setAttribute('y1', startY)
-    line3.setAttribute('x2', startX)
-    line3.setAttribute('y2', startY)
-    line3.setAttribute('stroke', '#ff3e00')
-    line3.setAttribute('stroke-dasharray', '5 10')
-    line3.setAttribute('fill', 'none')
-    const text = document.createElementNS(xmlns, 'text')
-    drawer.appendChild(text)
-    text.setAttribute('id', 'text')
-    text.setAttribute('x', startX)
-    text.setAttribute('y', startY)
-    text.setAttribute('dy', '0.35em')
-    text.setAttribute('text-anchor', 'middle')
-    text.setAttribute('font-size', '36px')
-    text.setAttribute('stroke', '#ff3e00')
-    text.setAttribute('opacity', '0.5')
-  }
-
-  function moveGuides(tx, ty) {
-    // Find top-left corner.
-    const tlx = Math.min(startX, tx)
-    const tly = Math.min(startY, ty)
-    // Find width and height.
-    const width = Math.abs(tx - startX)
-    const height = Math.abs(ty - startY)
-    const rect = document.getElementById('rect')
-    rect.setAttribute('x', tlx)
-    rect.setAttribute('y', tly)
-    rect.setAttribute('width', width)
-    rect.setAttribute('height', height)
-    const line1 = document.getElementById('line1')
-    const line2 = document.getElementById('line2')
-    const line3 = document.getElementById('line3')
-    if (width < height) {
-      const margin = (height - width) / 2
-      line1.setAttribute('x1', tlx)
-      line1.setAttribute('y1', tly + margin)
-      line1.setAttribute('x2', tlx + width)
-      line1.setAttribute('y2', tly + margin)
-      line2.setAttribute('x1', tlx)
-      line2.setAttribute('y1', tly + margin + width)
-      line2.setAttribute('x2', tlx + width)
-      line2.setAttribute('y2', tly + margin + width)
-    } else if (width > height) { 
-      const margin = (width - height) / 2
-      line1.setAttribute('x1', tlx + margin)
-      line1.setAttribute('y1', tly)
-      line1.setAttribute('x2', tlx + margin)
-      line1.setAttribute('y2', tly + height)
-      line2.setAttribute('x1', tlx + margin + height)
-      line2.setAttribute('y1', tly)
-      line2.setAttribute('x2', tlx + margin + height)
-      line2.setAttribute('y2', tly + height)
-    }
-    line3.setAttribute('x1', startX)
-    line3.setAttribute('y1', startY)
-    line3.setAttribute('x2', tx)
-    line3.setAttribute('y2', ty)
-    const text = document.getElementById('text')
-    text.setAttribute('x', (startX + tx) / 2)
-    text.setAttribute('y', (startY + ty) / 2)
-  }
-
   function updateGuidesText(str) {
-    const text = document.getElementById('text')
-    text.textContent = str
+    guides.updateText(str)
   }
 
-  /*
-    // This is the kind of code that will split a string over multiple
-    // text nodes if it is too wide.
-    // I probably need to replace the single text node about with <g>,
-    // and make sure that the (x,y) we have is the center node of the
-    // whole set of lines, both horizontally (easy) and vertically (harder).
-    
-  function labelTopAutoSplit (svg,x,y,width,font,label) {
-    let g = svg.append("g");
-    let words = label.split(/\s+/).reverse(),
-        word,
-        line = [],
-        dy = 0.35,
-        lineNumber = 0,
-        lineHeight = 1.1;  // ems
-    let text = g.append("text")
-        .attr("x", x)
-        .attr("y", y)
-        .attr("dy", dy + "em")
-        .attr("text-anchor","middle")
-	.call(fontAttrs,font);
-    while (word = words.pop()) {
-      line.push(word);
-      text.text(line.join(" "));
-      if (text.node().getComputedTextLength() > width && line.length > 1) {
-        // if the line length is > allotted width, drop the last word added
-        // unless that word is the only word in the line
-        line.pop();
-        text.text(line.join(" "));
-        line = [word];
-        text = g.append("text")
-	  .attr("x", x)
-	  .attr("y", y)
-	  .attr("dy", ++lineNumber * lineHeight + dy + "em")
-	  .attr("text-anchor","middle")
-	  .call(fontAttrs,font)
-	  .text(word);
-      }
-    }
+  function clearGuides() {
+    guides.remove()
+    guides = null
   }
-  */
 
-  function removeGuides() {
-    while (drawer.firstChild) {
-      drawer.firstChild.remove()
-    }
-    drawer.remove()
-  }
-  
   function handleMouseDown(evt) {
-    /// console.log(evt.clientX, evt.clientY)
-    if (!showMenu) {
-      drawing = true
-      startX = evt.clientX - svgX
-      startY = evt.clientY - svgY
-      makeGuides(startX, endX)
+    if (evt.button == 0) {
+      // Left button press.
+      if (!showMenu) {
+        startX = evt.clientX - svgX
+        startY = evt.clientY - svgY
+        guides = new Guides(svgNode, startX, startY)
+      }
     }
   }
 
   function handleMenuCancel() {
-    removeGuides()
+    clearGuides()
     showMenu = false
   }
 
   function handleMenuObject(typ, txt) {
-    removeGuides()
+    clearGuides()
     const obj = {
       type: typ,
       box: [startX, startY, endX, endY],
@@ -211,32 +62,41 @@
     showMenu = false
   }        
 
-  function handleMenuCircle() {
-    removeGuides()
-    const obj = {
-      type: 'circle',
-      box: [startX, startY, endX, endY]
-    }
-    diagram.objects.push(obj)
-    drawObject(obj)
-    showMenu = false
-  }        
-  
   function handleMouseUp(evt) {
-    if (drawing) {
-      drawing = false
-      endX = evt.clientX - svgX
-      endY = evt.clientY - svgY
-      showMenu = [endX, endY]
+    if (showMenu) {
+      return
+    }
+    if (evt.button == 0) {
+      // Left button release.
+      if (guides) {
+        endX = evt.clientX - svgX
+        endY = evt.clientY - svgY
+        if (startX !== endX || startY !== endY) {
+          showMenu = [endX, endY]
+        } else {
+          clearGuides()
+        }
+      }
+    } else if (evt.button == 2) {
+      // Right button click.
+      if (!guides) {
+        if (hovering >= 0) {
+          // We have a selected object!
+          console.log('selected = ', hovering)
+        }
+      }
     }
   }
 
   function handleMouseMove(evt) {
-    if (drawing) {
+    if (showMenu) {
+      return
+    }
+    if (guides) {
       const endX = evt.clientX - svgX
       const endY = evt.clientY - svgY
-      moveGuides(endX, endY)
-    } else if (!showMenu) {
+      guides.move(endX, endY)
+    } else {
       const pX = evt.clientX - svgX
       const pY = evt.clientY - svgY
       const idx = findObject(pX, pY)
@@ -261,7 +121,6 @@
         if (idx < 0) {
           // We need to kill the hovering element.
           hover.remove()
-          console.log('this should have removed the hover')
         } else {
           const box = diagram.objects[idx].box
           // We need to move it to the current object.
@@ -280,12 +139,15 @@
   }
     
   function handleMouseOut(evt) {
-    if (drawing) {
-      drawing = false
-      removeGuides()
+    if (guides) {
+      clearGuides()
     }
   }
 
+  function handleContextMenu(evt) {
+    evt.preventDefault()
+  }
+  
   function inObject(x, y, obj) {
     // TODO: maintain the invariant that [0,1] is always TL and [2,3] always BR.
     const minX = Math.min(obj.box[0], obj.box[2])
@@ -423,7 +285,7 @@
 <svg on:mousedown={handleMouseDown}
      on:mouseup={handleMouseUp}
      on:mousemove={handleMouseMove}
-     on:mouseleave={handleMouseOut}
+     on:contextmenu={handleContextMenu}
      use:action />
 
 {#if showMenu}
@@ -434,8 +296,8 @@
     makeObject={handleMenuObject}
     updateText={updateGuidesText}
     />
-{/if}
-  
+  {/if}
+
 <style>
   svg {
     width: calc(100vw - 16px);
