@@ -7,6 +7,8 @@
 
   import rough from "roughjs/bin/rough"
   import Menu from "./Menu.svelte"
+  // TODO: turn these into an object passing in startX startY svgNode, etc.
+  // import { makeGuides, moveGuides, updateGuidesText, removeGuides } from './guides.js'
   // npm i roughjs@4.0.4
   // https://roughjs.com/
   let roughSvg
@@ -18,6 +20,7 @@
   const xmlns = "http://www.w3.org/2000/svg"
 
   let drawing = false
+  let hovering = -1       // Index of what we're hovering over. Set to -1 for nothing.
   let startX
   let startY
   let endX
@@ -233,14 +236,72 @@
       const endX = evt.clientX - svgX
       const endY = evt.clientY - svgY
       moveGuides(endX, endY)
+    } else if (!showMenu) {
+      const pX = evt.clientX - svgX
+      const pY = evt.clientY - svgY
+      const idx = findObject(pX, pY)
+      if (hovering !== idx) {
+        // Previous hovering state is different than current.
+        let hover
+        if (hovering < 0) {
+          // We had no hovering before, we probably need to create one.
+          hover = document.createElementNS(xmlns, 'rect')
+          svgNode.appendChild(hover)
+          hover.setAttribute('id', 'hovering')
+          hover.setAttribute('x', 0)
+          hover.setAttribute('y', 0)
+          hover.setAttribute('width', 0)
+          hover.setAttribute('height', 0)
+          hover.setAttribute('stroke', '#003eff')
+          hover.setAttribute('stroke-dasharray', '5 10')
+          hover.setAttribute('fill', 'none')
+        } else {
+          hover = document.getElementById('hovering')
+        }
+        if (idx < 0) {
+          // We need to kill the hovering element.
+          hover.remove()
+          console.log('this should have removed the hover')
+        } else {
+          const box = diagram.objects[idx].box
+          // We need to move it to the current object.
+          const minX = Math.min(box[0], box[2])
+          const maxX = Math.max(box[0], box[2])
+          const minY = Math.min(box[1], box[3])
+          const maxY = Math.max(box[1], box[3])
+          hover.setAttribute('x', minX - 5)
+          hover.setAttribute('y', minY - 5)
+          hover.setAttribute('width', maxX - minX + 10)
+          hover.setAttribute('height', maxY - minY + 10)
+        }
+        hovering = idx
+      }
     }
   }
-
+    
   function handleMouseOut(evt) {
     if (drawing) {
       drawing = false
       removeGuides()
     }
+  }
+
+  function inObject(x, y, obj) {
+    // TODO: maintain the invariant that [0,1] is always TL and [2,3] always BR.
+    const minX = Math.min(obj.box[0], obj.box[2])
+    const maxX = Math.max(obj.box[0], obj.box[2])
+    const minY = Math.min(obj.box[1], obj.box[3])
+    const maxY = Math.max(obj.box[1], obj.box[3])
+    return x >= minX && x <= maxX && y >= minY && y <= maxY
+  }
+
+  function findObject(x, y) {
+    for (let i = diagram.objects.length - 1; i >= 0; i--) {
+      if (inObject(x, y, diagram.objects[i])) {
+        return i
+      }
+    }
+    return -1
   }
 
   function interceptRadius(cxy, oxy, r) {
