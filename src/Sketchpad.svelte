@@ -132,6 +132,48 @@
     text.textContent = str
   }
 
+  /*
+    // This is the kind of code that will split a string over multiple
+    // text nodes if it is too wide.
+    // I probably need to replace the single text node about with <g>,
+    // and make sure that the (x,y) we have is the center node of the
+    // whole set of lines, both horizontally (easy) and vertically (harder).
+    
+  function labelTopAutoSplit (svg,x,y,width,font,label) {
+    let g = svg.append("g");
+    let words = label.split(/\s+/).reverse(),
+        word,
+        line = [],
+        dy = 0.35,
+        lineNumber = 0,
+        lineHeight = 1.1;  // ems
+    let text = g.append("text")
+        .attr("x", x)
+        .attr("y", y)
+        .attr("dy", dy + "em")
+        .attr("text-anchor","middle")
+	.call(fontAttrs,font);
+    while (word = words.pop()) {
+      line.push(word);
+      text.text(line.join(" "));
+      if (text.node().getComputedTextLength() > width && line.length > 1) {
+        // if the line length is > allotted width, drop the last word added
+        // unless that word is the only word in the line
+        line.pop();
+        text.text(line.join(" "));
+        line = [word];
+        text = g.append("text")
+	  .attr("x", x)
+	  .attr("y", y)
+	  .attr("dy", ++lineNumber * lineHeight + dy + "em")
+	  .attr("text-anchor","middle")
+	  .call(fontAttrs,font)
+	  .text(word);
+      }
+    }
+  }
+  */
+
   function removeGuides() {
     while (drawer.firstChild) {
       drawer.firstChild.remove()

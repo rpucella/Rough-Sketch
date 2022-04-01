@@ -55,11 +55,19 @@
     z-index: 100;
     background-color: white;
     border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 6em;
   }
 
   div.option {
     padding: 4px;
     cursor: pointer;
+    flex: 1;
+    width: 100%;
+    padding: 4px 0;
+    text-align: center;
   }
 
   div.option:hover {
@@ -68,6 +76,6 @@
   }
 
   div.option:not(:first-child) {
-    border-top: 1px solid black;
+    /* border-top: 1px solid black;*/
   }        
 </style>
