@@ -70,6 +70,16 @@
     line3.setAttribute('stroke', '#ff3e00')
     line3.setAttribute('stroke-dasharray', '5 10')
     line3.setAttribute('fill', 'none')
+    const text = document.createElementNS(xmlns, 'text')
+    drawer.appendChild(text)
+    text.setAttribute('id', 'text')
+    text.setAttribute('x', startX)
+    text.setAttribute('y', startY)
+    text.setAttribute('dy', '0.35em')
+    text.setAttribute('text-anchor', 'middle')
+    text.setAttribute('font-size', '36px')
+    text.setAttribute('stroke', '#ff3e00')
+    text.setAttribute('opacity', '0.5')
   }
 
   function moveGuides(tx, ty) {
@@ -112,6 +122,14 @@
     line3.setAttribute('y1', startY)
     line3.setAttribute('x2', tx)
     line3.setAttribute('y2', ty)
+    const text = document.getElementById('text')
+    text.setAttribute('x', (startX + tx) / 2)
+    text.setAttribute('y', (startY + ty) / 2)
+  }
+
+  function updateGuidesText(str) {
+    const text = document.getElementById('text')
+    text.textContent = str
   }
 
   function removeGuides() {
@@ -136,11 +154,12 @@
     showMenu = false
   }
 
-  function handleMenuObject(typ) {
+  function handleMenuObject(typ, txt) {
     removeGuides()
     const obj = {
       type: typ,
-      box: [startX, startY, endX, endY]
+      box: [startX, startY, endX, endY],
+      text: txt
     }
     diagram.objects.push(obj)
     drawObject(obj)
@@ -214,7 +233,30 @@
     const r2 = roughSvg.line(endX, endY, p2[0], p2[1])
     svgNode.appendChild(r1)
     svgNode.appendChild(r2)
-  }    
+  }
+
+  function createText(cxy, txt) {
+    // First draw the text in white with a thick pen (background).
+    const rtback = document.createElementNS(xmlns, 'text')
+    rtback.setAttribute('x', cxy[0])
+    rtback.setAttribute('y', cxy[1])
+    rtback.setAttribute('dy', '0.35em')
+    rtback.setAttribute('text-anchor', 'middle')
+    rtback.setAttribute('font-size', '36px')
+    rtback.setAttribute('stroke-width', '10px')
+    rtback.setAttribute('stroke', 'white')
+    rtback.textContent = txt
+    svgNode.appendChild(rtback)
+    // Then draw the actual text in the space created.
+    const rt = document.createElementNS(xmlns, 'text')
+    rt.setAttribute('x', cxy[0])
+    rt.setAttribute('y', cxy[1])
+    rt.setAttribute('dy', '0.35em')
+    rt.setAttribute('text-anchor', 'middle')
+    rt.setAttribute('font-size', '36px')
+    rt.textContent = txt
+    svgNode.appendChild(rt)
+  }
 
   function drawObject(obj) {
     const width = Math.abs(obj.box[2] - obj.box[0])
@@ -256,16 +298,10 @@
       arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]])
       break;
     case 'text':
-      const rt = document.createElementNS(xmlns, 'text')
-      rt.setAttribute('x', (obj.box[2] + obj.box[0]) / 2)
-      rt.setAttribute('y', (obj.box[3] + obj.box[1]) / 2)
-      rt.setAttribute('dy', '0.35em')
-      rt.setAttribute('text-anchor', 'middle')
-      rt.setAttribute('font-size', '36px')
-      const txt = document.createTextNode(obj.text)
-      rt.appendChild(txt)
-      svgNode.appendChild(rt)
       break
+    }
+    if (obj.text) {
+      createText([(obj.box[0] + obj.box[2]) / 2, (obj.box[1] + obj.box[3]) / 2], obj.text)
     }
   }
 
@@ -293,9 +329,10 @@
     y={showMenu[1]}
     cancel={handleMenuCancel}
     makeObject={handleMenuObject}
+    updateText={updateGuidesText}
     />
-  {/if}
-
+{/if}
+  
 <style>
   svg {
     width: calc(100vw - 16px);

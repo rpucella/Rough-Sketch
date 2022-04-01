@@ -1,9 +1,10 @@
 <script>
   import Sketchpad from './Sketchpad.svelte';
   const diagram = {
-      height: 400,
+    height: 400,
     width: 800,
-    objects: [
+    objects: []
+    /*
       {
         type: 'rectangle',
         box: [10, 10, 300, 150]
@@ -21,7 +22,7 @@
         box: [10, 10, 300, 150],
         text: 'First Box'
       }
-    ]
+      */
   }
 </script>
 
