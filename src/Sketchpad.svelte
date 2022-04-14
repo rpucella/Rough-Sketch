@@ -5,6 +5,8 @@
   // How to draw:
   // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
+  // TODO: assign a unique ID to each object in the diagram.
+
   import rough from "roughjs/bin/rough"
   import Menu from "./Menu.svelte"
   import { Guides } from './guides.js'
@@ -58,7 +60,7 @@
       text: txt
     }
     diagram.objects.push(obj)
-    drawObject(obj)
+    diagram = diagram
     showMenu = false
   }        
 
@@ -183,7 +185,7 @@
     return [nx + cxy[0], ny + cxy[1]]
   }
 
-  function arrowHead(end, start) {
+  function arrowHead(end, start, target) {
     const endX = end[0]
     const endY = end[1]
     const startX = start[0]
@@ -196,11 +198,11 @@
     const p2 = rotateAbout(inter, end, -Math.PI / 6)
     const r1 = roughSvg.line(endX, endY, p1[0], p1[1])
     const r2 = roughSvg.line(endX, endY, p2[0], p2[1])
-    svgNode.appendChild(r1)
-    svgNode.appendChild(r2)
+    target.appendChild(r1)
+    target.appendChild(r2)
   }
 
-  function createText(cxy, txt) {
+  function createText(cxy, txt, target) {
     // First draw the text in white with a thick pen (background).
     const rtback = document.createElementNS(xmlns, 'text')
     rtback.setAttribute('x', cxy[0])
@@ -211,7 +213,7 @@
     rtback.setAttribute('stroke-width', '10px')
     rtback.setAttribute('stroke', 'white')
     rtback.textContent = txt
-    svgNode.appendChild(rtback)
+    target.appendChild(rtback)
     // Then draw the actual text in the space created.
     const rt = document.createElementNS(xmlns, 'text')
     rt.setAttribute('x', cxy[0])
@@ -220,10 +222,10 @@
     rt.setAttribute('text-anchor', 'middle')
     rt.setAttribute('font-size', '36px')
     rt.textContent = txt
-    svgNode.appendChild(rt)
+    target.appendChild(rt)
   }
 
-  function drawObject(obj) {
+  function drawObject(obj, target) {
     const width = Math.abs(obj.box[2] - obj.box[0])
     const height = Math.abs(obj.box[3] - obj.box[1])
     const left = Math.min(obj.box[0], obj.box[2])
@@ -232,52 +234,59 @@
     case 'rectangle':
       // Set fill to white or something...
       const rr = roughSvg.rectangle(left, top, width, height)
-      svgNode.appendChild(rr)
+      target.appendChild(rr)
       break
     case 'circle':
       const rc = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
-      svgNode.appendChild(rc)
+      target.appendChild(rc)
       break
     case 'ellipse':
       const re = roughSvg.ellipse((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, width, height)
-      svgNode.appendChild(re)
+      target.appendChild(re)
       break
     case 'line':
       const rl = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
-      svgNode.appendChild(rl)
+      target.appendChild(rl)
       break
     case 'arrow':
       const ra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
-      svgNode.appendChild(ra)
-      arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]])
+      target.appendChild(ra)
+      arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]], target)
       break;
     case 'reverse-arrow':
       const rra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
-      svgNode.appendChild(rra)
-      arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]])
+      target.appendChild(rra)
+      arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]], target)
       break;
     case 'double-arrow':
       const rda = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
-      svgNode.appendChild(rda)
-      arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]])
-      arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]])
+      target.appendChild(rda)
+      arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]], target)
+      arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]], target)
       break;
     case 'text':
       break
     }
     if (obj.text) {
-      createText([(obj.box[0] + obj.box[2]) / 2, (obj.box[1] + obj.box[3]) / 2], obj.text)
+      createText([(obj.box[0] + obj.box[2]) / 2, (obj.box[1] + obj.box[3]) / 2], obj.text, target)
     }
   }
 
-  function action(node) {
+  function svgAction(node) {
     svgNode = node
     const rect = node.getBoundingClientRect()
     svgX = rect.left
     svgY = rect.top
     roughSvg = rough.svg(node)
-    for (const obj of diagram.objects) {
-      drawObject(obj)
+  }
+
+  function objAction(node, obj) {
+    console.log(`processing ${obj.type}`)
+    drawObject(obj, node)
+    return {
+      destroy() {
+        node.remove()
+      }
     }
   }
 </script>
@@ -286,7 +295,11 @@
      on:mouseup={handleMouseUp}
      on:mousemove={handleMouseMove}
      on:contextmenu={handleContextMenu}
-     use:action />
+     use:svgAction>
+  {#each diagram.objects as obj}
+    <g use:objAction={obj} />
+  {/each}
+</svg>
 
 {#if showMenu}
   <Menu
