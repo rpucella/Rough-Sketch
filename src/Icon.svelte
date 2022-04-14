@@ -19,7 +19,7 @@
 <style>
   img.icon {
     flex: 1;
-    padding: 8px 8px;
+    margin: 16px 8px;
     opacity: 0.3;
   }
 

@@ -9,11 +9,8 @@
   }
 
   function clearDiagram() {
-    console.log('clearing!')
-    console.log(diagram)
     diagram.objects = []
     diagram = diagram
-    console.log(diagram)
   }
 
   function downloadDiagram() {
@@ -54,9 +51,11 @@
 <main>
   <div class="title">Rough Sketch</div>
   <div class="icons">
-    <Icon src="assets/icons/clear.svg" width="2em" clickFn={clearDiagram} />
-    <Icon src="assets/icons/upload.svg" width="2em" />
-    <Icon src="assets/icons/download.svg" width="2em" clickFn={downloadDiagram} />
+    <Icon src="assets/icons/clear.svg" width="1.5em" clickFn={clearDiagram} />
+    <Icon src="assets/icons/upload.svg" width="1.5em" />
+    <Icon src="assets/icons/download.svg" width="1.5em" clickFn={downloadDiagram} />
+    <Icon src="assets/icons/help.svg" width="1.5em" />
+    <Icon src="assets/icons/settings.svg" width="1.5em" />
   </div>
   <Sketchpad diagram={diagram} />
 </main>
