@@ -1,19 +1,37 @@
 <script>
 
-  import Sketchpad from './Sketchpad.svelte';
+  import DiagramEditor from './DiagramEditor.svelte';
   import Icon from './Icon.svelte';
-  let diagram = {
-    height: 400,
-    width: 800,
-    objects: []
-  }
+
+  let objects = []
+  let d_height = 400
+  let d_width = 400
+
+  $: hasObjects = objects && objects.length > 0
 
   function clearDiagram() {
-    diagram.objects = []
-    diagram = diagram
+    objects = []
+  }
+
+  function addObject(obj) {
+    if (obj) { 
+      objects.push(obj)
+    }
+    objects = objects
+    ///console.log('refreshing objects = ', objects)
+  }
+
+  function uploadDiagram() {
+    // TODO: Need a modal box to get the name!
+    alert('Upload not yet implemented')
   }
 
   function downloadDiagram() {
+    const diagram = {
+      height: d_height,
+      width: d_width,
+      objects: objects
+    }
     const blob = new Blob([JSON.stringify(diagram, null, 2)], { type: 'text/json' })
     const link = document.createElement('a')
     link.download = 'diagram.json'
@@ -51,13 +69,13 @@
 <main>
   <div class="title">Rough Sketch</div>
   <div class="icons">
-    <Icon src="assets/icons/clear.svg" width="1.5em" clickFn={clearDiagram} />
-    <Icon src="assets/icons/upload.svg" width="1.5em" />
-    <Icon src="assets/icons/download.svg" width="1.5em" clickFn={downloadDiagram} />
-    <Icon src="assets/icons/help.svg" width="1.5em" />
-    <Icon src="assets/icons/settings.svg" width="1.5em" />
+    <Icon src="assets/icons/clear.svg" width="1.5em" clickFn={hasObjects && clearDiagram} />
+      <!-- <Icon src="assets/icons/upload.svg" width="1.5em" clickFn={uploadDiagram} /> -->
+      <Icon src="assets/icons/download.svg" width="1.5em" clickFn={hasObjects && downloadDiagram} />
+      <!-- <Icon src="assets/icons/help.svg" width="1.5em" /> -->
+      <!-- <Icon src="assets/icons/settings.svg" width="1.5em" /> -->
   </div>
-  <Sketchpad diagram={diagram} />
+  <DiagramEditor objects={objects} addObject={addObject} />
 </main>
 
 <style>

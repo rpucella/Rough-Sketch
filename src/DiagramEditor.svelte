@@ -6,15 +6,18 @@
   // TODO: assign a unique ID to each object in the diagram.
 
   import rough from "roughjs/bin/rough"
-  import Menu from "./Menu.svelte"
+  import { nanoid } from 'nanoid'
+  import MenuCreate from "./MenuCreate.svelte"
+  import MenuEdit from "./MenuEdit.svelte"
   import Object from "./Object.svelte"
   import { Guides } from './guides.js'
-  
+
   let roughSvg
   let svgNode
   let svgX
   let svgY
-  export let diagram
+  export let objects
+  export let addObject
   
   const xmlns = "http://www.w3.org/2000/svg"
 
@@ -24,21 +27,28 @@
   let endX
   let endY
   let guides = null       // Gets a value when drawing
-  let showMenu
+  let showMenuCreate
+  let showMenuEdit
+
+  function isShowMenu() {
+    return showMenuCreate || showMenuEdit
+  }
 
   function updateGuidesText(str) {
     guides.updateText(str)
   }
 
   function clearGuides() {
-    guides.remove()
-    guides = null
+    if (guides) { 
+      guides.remove()
+      guides = null
+    }
   }
 
   function handleMouseDown(evt) {
     if (evt.button == 0) {
       // Left button press.
-      if (!showMenu) {
+      if (!showMenuCreate && !showMenuEdit) {
         startX = evt.clientX - svgX
         startY = evt.clientY - svgY
         guides = new Guides(svgNode, startX, startY)
@@ -48,23 +58,30 @@
 
   function handleMenuCancel() {
     clearGuides()
-    showMenu = false
+    showMenuCreate = false
+    showMenuEdit = false
   }
 
   function handleMenuObject(typ, txt) {
     clearGuides()
     const obj = {
+      id: nanoid(),
       type: typ,
       box: [startX, startY, endX, endY],
       text: txt
     }
-    diagram.objects.push(obj)
-    diagram = diagram
-    showMenu = false
-  }        
+    addObject(obj)
+    showMenuCreate = false
+  }
+
+  function handleMenuUpdate(obj) {
+    // Adding a null object is just a refresh.
+    addObject()
+    showMenuEdit = false
+  }
 
   function handleMouseUp(evt) {
-    if (showMenu) {
+    if (showMenuCreate || showMenuEdit) {
       return
     }
     if (evt.button == 0) {
@@ -73,9 +90,14 @@
         endX = evt.clientX - svgX
         endY = evt.clientY - svgY
         if (startX !== endX || startY !== endY) {
-          showMenu = [endX, endY]
+          showMenuCreate = [endX, endY]
         } else {
           clearGuides()
+          // Show edit menu if we have a selected object.
+          if (hovering >= 0) {
+            //console.log('object = ', hovering)
+            showMenuEdit = [endX, endY, hovering]
+          }
         }
       }
     } else if (evt.button == 2) {
@@ -90,7 +112,7 @@
   }
 
   function handleMouseMove(evt) {
-    if (showMenu) {
+    if (showMenuCreate || showMenuEdit) {
       return
     }
     if (guides) {
@@ -123,7 +145,7 @@
           // We need to kill the hovering element.
           hover.remove()
         } else {
-          const box = diagram.objects[idx].box
+          const box = objects[idx].box
           // We need to move it to the current object.
           const minX = Math.min(box[0], box[2])
           const maxX = Math.max(box[0], box[2])
@@ -159,8 +181,8 @@
   }
 
   function findObject(x, y) {
-    for (let i = diagram.objects.length - 1; i >= 0; i--) {
-      if (inObject(x, y, diagram.objects[i])) {
+    for (let i = objects.length - 1; i >= 0; i--) {
+      if (inObject(x, y, objects[i])) {
         return i
       }
     }
@@ -182,18 +204,28 @@
      on:mousemove={handleMouseMove}
      on:contextmenu={handleContextMenu}
      use:action>
-  {#each diagram.objects as obj}
+  {#each objects as obj (obj.id)}
     <Object obj={obj} roughSvg={roughSvg}/>
   {/each}
 </svg>
 
-{#if showMenu}
-  <Menu
-    x={showMenu[0]}
-    y={showMenu[1]}
+{#if showMenuCreate}
+  <MenuCreate
+    x={showMenuCreate[0]}
+    y={showMenuCreate[1]}
     cancel={handleMenuCancel}
     makeObject={handleMenuObject}
     updateText={updateGuidesText}
+    />
+  {/if}
+
+{#if showMenuEdit}
+  <MenuEdit
+    x={showMenuEdit[0]}
+    y={showMenuEdit[1]}
+    obj={objects[showMenuEdit[2]]}
+    updateObject={handleMenuUpdate}
+    cancel={handleMenuCancel}
     />
   {/if}
 

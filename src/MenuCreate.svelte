@@ -37,6 +37,7 @@
 </script>
 
 <div class="menu" style:--position-x={x} style:--position-y={y}>
+  <div class="title">Create</div>
   <div class="option" on:click={() => makeObject('rectangle', text)}>Rectangle</div>
   <div class="option" on:click={() => makeObject('ellipse', text)}>Ellipse</div>
   <div class="option" on:click={() => makeObject('circle', text)}>Circle</div>
@@ -71,6 +72,19 @@
     text-align: center;
   }
 
+  div.title {
+    padding: 4px;
+    cursor: pointer;
+    flex: 1;
+    width: 100%;
+    padding: 4px 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+    background-color: red;
+  }
+  
   div.option:hover {
     background-color: black;
     color: white;

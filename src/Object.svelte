@@ -3,8 +3,12 @@
   // Interesting font to use:
   // https://fonts.google.com/specimen/Nothing+You+Could+Do?category=Handwriting&preview.text=Server&preview.text_type=custom
 
+  import {afterUpdate} from 'svelte'
+  
   export let roughSvg
   export let obj
+
+  let gNode = null
   
   const xmlns = "http://www.w3.org/2000/svg"
 
@@ -112,7 +116,16 @@
     }
   }
 
+  function clearChildren() {
+    if (gNode) { 
+      while (gNode.firstChild) {
+        gNode.removeChild(gNode.firstChild)
+      }
+    }
+  }
+
   function action(node, obj) {
+    gNode = node
     drawObject(obj, node)
     return {
       destroy() {
@@ -120,6 +133,15 @@
       }
     }
   }
+
+  afterUpdate(() => {
+    if (obj.edited) { 
+      delete obj.edited
+      clearChildren()
+      drawObject(obj, gNode)
+    }
+  })
+  
 </script>
 
 <g use:action={obj} />
