@@ -1,12 +1,64 @@
 
 <script>
 
+  import Menu from './Menu.svelte'
   import { onDestroy } from 'svelte'
   export let x
   export let y
   export let cancel
   export let makeObject
   export let updateText
+
+  const options = [
+    {
+      type: 'option',
+      fun: () => makeObject('rectangle', text),
+      name: 'Rectangle'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('ellipse', text),
+      name: 'Ellipse'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('circle', text),
+      name: 'Circle'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('line', text),
+      name: 'Line'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('arrow', text),
+      name: 'Arrow'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('reverse-arrow', text),
+      name: 'R-Arrow'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('double-arrow', text),
+      name: 'D-Arrow'
+    },
+    {
+      type: 'option',
+      fun: () => makeObject('text', text),
+      name: 'Text'
+    },
+    {
+      type: 'separator'
+    },
+    {
+      type: 'option',
+      fun: cancel,
+      name: 'Cancel'
+    },
+  ]
 
   let chars = []
   let text = ''
@@ -36,61 +88,11 @@
   
 </script>
 
-<div class="menu" style:--position-x={x} style:--position-y={y}>
-  <div class="title">Create</div>
-  <div class="option" on:click={() => makeObject('rectangle', text)}>Rectangle</div>
-  <div class="option" on:click={() => makeObject('ellipse', text)}>Ellipse</div>
-  <div class="option" on:click={() => makeObject('circle', text)}>Circle</div>
-  <div class="option" on:click={() => makeObject('line', text)}>Line</div>
-  <div class="option" on:click={() => makeObject('arrow', text)}>Arrow</div>
-  <div class="option" on:click={() => makeObject('reverse-arrow', text)}>R-Arrow</div>
-  <div class="option" on:click={() => makeObject('double-arrow', text)}>D-Arrow</div>
-  <div class="option" on:click={() => makeObject('text', text)}>Text</div>
-  <div class="option" on:click={cancel}>Cancel</div>
-</div>
-
-<style>
-  div.menu {
-    position: fixed;
-    left: calc(var(--position-x) * 1px);
-    top: calc(var(--position-y) * 1px);
-    z-index: 100;
-    background-color: white;
-    border: 1px solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 6em;
-  }
-
-  div.option {
-    padding: 4px;
-    cursor: pointer;
-    flex: 1;
-    width: 100%;
-    padding: 4px 0;
-    text-align: center;
-  }
-
-  div.title {
-    padding: 4px;
-    cursor: pointer;
-    flex: 1;
-    width: 100%;
-    padding: 4px 0;
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: white;
-    background-color: red;
-  }
-  
-  div.option:hover {
-    background-color: black;
-    color: white;
-  }
-
-  div.option:not(:first-child) {
-    /* border-top: 1px solid black;*/
-  }        
-</style>
+<Menu
+  x={x}
+  y={y}
+  content={options}
+  name='Create'
+  color='red'
+  cancel={cancel}
+  />
