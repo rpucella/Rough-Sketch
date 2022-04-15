@@ -19,6 +19,7 @@
   let svgY
   export let objects
   export let addObject
+  export let deleteObject
   
   const xmlns = "http://www.w3.org/2000/svg"
 
@@ -84,12 +85,22 @@
     showMenuEdit = false
   }
 
-  function handleMenuMove(obj) {
+  function handleMenuMove(obj, clientX, clientY) {
     const guides = new Guides(svgNode, obj.box[0], obj.box[1])
     guides.resize(obj.box[2], obj.box[3])
-    startX = endX
-    startY = endY
+    startX = clientX - svgX
+    startY = clientY - svgY
     moving = [obj, guides]
+    showMenuEdit = false
+  }
+
+  function handleMenuDelete(obj, clientX, clientY) {
+    deleteObject(obj)
+    // Adjustment because we are affecting the resulting hovering.
+    selector.clear()
+    const pX = clientX - svgX
+    const pY = clientY - svgY
+    selector.select(objects, pX, pY)
     showMenuEdit = false
   }
 
@@ -203,6 +214,7 @@
     obj={showMenuEdit[2]}
     updateObject={handleMenuUpdate}
     moveObject={handleMenuMove}
+    deleteObject={handleMenuDelete}
     cancel={handleMenuCancel}
     />
   {/if}

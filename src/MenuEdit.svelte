@@ -7,6 +7,7 @@
   export let obj
   export let updateObject
   export let moveObject
+  export let deleteObject
   export let cancel
 
   function changeType(newType) {
@@ -17,8 +18,12 @@
     ///console.log('object = ', obj)
   }
 
-  function move() {
-    moveObject(obj)
+  function move(evt) {
+    moveObject(obj, evt.clientX, evt.clientY)
+  }
+
+  function del(evt) {
+    deleteObject(obj, evt.clientX, evt.clientY)
   }
 
   function clickOutside(node) {
@@ -39,9 +44,9 @@
 <div class="background" on:click={cancel}>
   <div class="menu" style:--position-x={x} style:--position-y={y}>
     <div class="title">Edit</div>
-    <div class="option" on:click={() => move()}>Move</div>
+    <div class="option" on:click={move}>Move</div>
     <div class="unavailable">Resize</div>
-    <div class="unavailable">Delete</div>
+    <div class="option" on:click={del}>Delete</div>
     <div class="unavailable">Forward</div>
     <div class="unavailable">Back</div>
     <div class="separator" />

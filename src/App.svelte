@@ -21,6 +21,17 @@
     ///console.log('refreshing objects = ', objects)
   }
 
+  function deleteObject(obj) {
+    if (obj) {
+      for (let i = 0; i < objects.length; i++) {
+        if (obj.id === objects[i].id) {
+          objects.splice(i, 1)
+        }
+      }
+    }
+    objects = objects
+  }
+
   function uploadDiagram() {
     // TODO: Need a modal box to get the name!
     alert('Upload not yet implemented')
@@ -75,7 +86,7 @@
       <!-- <Icon src="assets/icons/help.svg" width="1.5em" /> -->
       <!-- <Icon src="assets/icons/settings.svg" width="1.5em" /> -->
   </div>
-  <DiagramEditor objects={objects} addObject={addObject} />
+  <DiagramEditor objects={objects} addObject={addObject} deleteObject={deleteObject} />
 </main>
 
 <style>
