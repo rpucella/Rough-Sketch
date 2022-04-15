@@ -34,6 +34,7 @@
   let showMenuCreate
   let showMenuEdit
   let moving = false
+  let resizing = false
 
   function isShowMenu() {
     return showMenuCreate || showMenuEdit
@@ -53,7 +54,7 @@
   function handleMouseDown(evt) {
     if (evt.button == 0) {
       // Left button press.
-      if (!showMenuCreate && !showMenuEdit && !moving) {
+      if (!showMenuCreate && !showMenuEdit && !moving && !resizing) {
         startX = evt.clientX - svgX
         startY = evt.clientY - svgY
         guides = new Guides(svgNode, startX, startY)
@@ -94,6 +95,17 @@
     showMenuEdit = false
   }
 
+  function handleMenuResize(obj, clientX, clientY) {
+    const guides = new Guides(svgNode, obj.box[0], obj.box[1])
+    startX = obj.box[0]
+    startY = obj.box[1]
+    endX = clientX - svgX
+    endY = clientY - svgY
+    guides.resize(endX, endY)
+    resizing = [obj, guides]
+    showMenuEdit = false
+  }
+
   function handleMenuDelete(obj, clientX, clientY) {
     deleteObject(obj)
     // Adjustment because we are affecting the resulting hovering.
@@ -108,11 +120,11 @@
     if (showMenuCreate || showMenuEdit) {
       return
     }
+    endX = evt.clientX - svgX
+    endY = evt.clientY - svgY
     if (evt.button == 0) {
       // Left button release.
       if (guides) {
-        endX = evt.clientX - svgX
-        endY = evt.clientY - svgY
         if (startX !== endX || startY !== endY) {
           showMenuCreate = [endX, endY]
         } else {
@@ -132,9 +144,17 @@
         addObject()
         // Adjustment because we are affecting the resulting hovering.
         selector.clear()
-        const pX = evt.clientX - svgX
-        const pY = evt.clientY - svgY
-        selector.select(objects, pX, pY)
+        selector.select(objects, endX, endY)
+      } else if (resizing) {
+        const [obj, guides ] = resizing
+        guides.remove()
+        resizing = false
+        obj.box = guides.box()
+        obj.edited = true
+        addObject()
+        // Adjustment because we are affecting the resulting hovering.
+        selector.clear()
+        selector.select(objects, endX, endY)
       }
     } else if (evt.button == 2) {
       // Right button click.
@@ -151,19 +171,20 @@
     if (showMenuCreate || showMenuEdit) {
       return
     }
+    const endX = evt.clientX - svgX
+    const endY = evt.clientY - svgY
     if (guides) {
-      const endX = evt.clientX - svgX
-      const endY = evt.clientY - svgY
       guides.resize(endX, endY)
     } else if (moving) {
-      const dx = (evt.clientX - svgX) - startX
-      const dy = (evt.clientY - svgY) - startY
+      const dx = endX - startX
+      const dy = endY - startY
       const [obj, guides] = moving
       guides.move(obj.box[0] + dx, obj.box[1] + dy, obj.box[2] + dx, obj.box[3] + dy)
+    } else if (resizing) {
+      const [obj, guides] = resizing
+      guides.resize(endX, endY)
     }
-    const pX = evt.clientX - svgX
-    const pY = evt.clientY - svgY
-    selector.select(objects, pX, pY)
+    selector.select(objects, endX, endY)
   }
     
   function handleMouseOut(evt) {
@@ -215,6 +236,7 @@
     updateObject={handleMenuUpdate}
     moveObject={handleMenuMove}
     deleteObject={handleMenuDelete}
+    resizeObject={handleMenuResize}
     cancel={handleMenuCancel}
     />
   {/if}

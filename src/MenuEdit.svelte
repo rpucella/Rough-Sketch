@@ -8,6 +8,7 @@
   export let updateObject
   export let moveObject
   export let deleteObject
+  export let resizeObject
   export let cancel
 
   function changeType(newType) {
@@ -24,6 +25,10 @@
 
   function del(evt) {
     deleteObject(obj, evt.clientX, evt.clientY)
+  }
+
+  function resize(evt) {
+    resizeObject(obj, evt.clientX, evt.clientY)
   }
 
   function clickOutside(node) {
@@ -45,7 +50,7 @@
   <div class="menu" style:--position-x={x} style:--position-y={y}>
     <div class="title">Edit</div>
     <div class="option" on:click={move}>Move</div>
-    <div class="unavailable">Resize</div>
+    <div class="option" on:click={resize}>Resize</div>
     <div class="option" on:click={del}>Delete</div>
     <div class="unavailable">Forward</div>
     <div class="unavailable">Back</div>
