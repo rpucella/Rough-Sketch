@@ -20,6 +20,10 @@
   export let objects
   export let addObject
   export let deleteObject
+
+  // How many pixels' fuzz do we allow we recognizing that we're creating
+  // an object as opposed to click on an existing object.
+  const fuzz = 4
   
   const xmlns = "http://www.w3.org/2000/svg"
 
@@ -125,7 +129,7 @@
     if (evt.button == 0) {
       // Left button release.
       if (guides) {
-        if (startX !== endX || startY !== endY) {
+        if (Math.abs(startX - endX) > fuzz || Math.abs(startY - endY) > fuzz) {
           showMenuCreate = [endX, endY]
         } else {
           clearGuides()
@@ -159,7 +163,7 @@
     } else if (evt.button == 2) {
       // Right button click.
       if (!guides) {
-        if (selector.isSelecting()) {
+        if (selector.isSelected()) {
           // We have a selected object!
           console.log('selected = ', selector.object())
         }

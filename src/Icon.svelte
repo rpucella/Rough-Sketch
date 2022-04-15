@@ -19,12 +19,13 @@
 <style>
   img.icon {
     flex: 1;
-    margin: 16px 8px;
+    margin: 12px 8px;
     opacity: 0.3;
   }
 
   img.active {
-        cursor: pointer;
+    cursor: pointer;
+    opacity: 1;
   }
 
   img.active:hover {
