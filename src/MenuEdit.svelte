@@ -6,6 +6,7 @@
   export let y
   export let obj
   export let updateObject
+  export let moveObject
   export let cancel
 
   function changeType(newType) {
@@ -16,22 +17,57 @@
     ///console.log('object = ', obj)
   }
 
+  function move() {
+    moveObject(obj)
+  }
+
+  function clickOutside(node) {
+    const handleClick = (event) => {
+      if (!node.contains(event.target)) {
+	node.dispatchEvent(new CustomEvent("outclick"));
+      }
+    }
+    document.addEventListener("click", handleClick)
+    return {
+      destroy() {
+	document.removeEventListener("click", handleClick)
+      }
+    }
+  }
 </script>
 
-<div class="menu" style:--position-x={x} style:--position-y={y}>
-  <div class="title">Edit</div>
-  <div class="option" on:click={() => changeType('rectangle') }>Rectangle</div>
-  <div class="option" on:click={() => changeType('ellipse')}>Ellipse</div>
-  <div class="option" on:click={() => changeType('circle')}>Circle</div>
-  <div class="option" on:click={() => changeType('line')}>Line</div>
-  <div class="option" on:click={() => changeType('arrow')}>Arrow</div>
-  <div class="option" on:click={() => changeType('reverse-arrow')}>R-Arrow</div>
-  <div class="option" on:click={() => changeType('double-arrow')}>D-Arrow</div>
-  <div class="option" on:click={() => changeType('text')}>Text</div> 
-  <div class="option" on:click={cancel}>Cancel</div>
+<div class="background" on:click={cancel}>
+  <div class="menu" style:--position-x={x} style:--position-y={y}>
+    <div class="title">Edit</div>
+    <div class="option" on:click={() => move()}>Move</div>
+    <div class="unavailable">Resize</div>
+    <div class="unavailable">Delete</div>
+    <div class="unavailable">Forward</div>
+    <div class="unavailable">Back</div>
+    <div class="separator" />
+    <div class="option" on:click={() => changeType('rectangle') }>&rarr; Rectangle</div>
+    <div class="option" on:click={() => changeType('ellipse')}>&rarr; Ellipse</div>
+    <div class="option" on:click={() => changeType('circle')}>&rarr; Circle</div>
+    <div class="option" on:click={() => changeType('line')}>&rarr; Line</div>
+    <div class="option" on:click={() => changeType('arrow')}>&rarr; Arrow</div>
+    <div class="option" on:click={() => changeType('reverse-arrow')}>&rarr; R-Arrow</div>
+    <div class="option" on:click={() => changeType('double-arrow')}>&rarr; D-Arrow</div>
+    <div class="option" on:click={() => changeType('text')}>&rarr; Text</div>
+    <div class="separator" />
+    <div class="option" on:click={cancel}>Cancel</div>
+  </div>
 </div>
-
+  
 <style>
+  div.background {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+  }
+  
   div.menu {
     position: fixed;
     left: calc(var(--position-x) * 1px);
@@ -41,16 +77,15 @@
     border: 1px solid black;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 6em;
+    align-items: flex-start;
+    width: 8em;
   }
 
   div.title {
     padding: 4px;
     cursor: pointer;
     flex: 1;
-    width: 100%;
-    padding: 4px 0;
+    width: calc(100% - 8px);
     text-align: center;
     text-transform: uppercase;
     font-weight: bold;
@@ -58,13 +93,27 @@
     background-color: blue;
   }
 
+  div.separator {
+    flex: 1;
+    height: 1px;
+    width: 100%;
+    border-top: 1px solid black;
+  }
+
   div.option {
     padding: 4px;
     cursor: pointer;
     flex: 1;
-    width: 100%;
-    padding: 4px 0;
-    text-align: center;
+    width: calc(100% - 8px);
+    text-align: left;
+  }
+
+  div.unavailable {
+    opacity: 0.5;
+    padding: 4px;
+    flex: 1;
+    width: calc(100% - 8px);
+    text-align: left;
   }
 
   div.option:hover {

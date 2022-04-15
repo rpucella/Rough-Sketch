@@ -11,6 +11,7 @@
   import MenuEdit from "./MenuEdit.svelte"
   import Object from "./Object.svelte"
   import { Guides } from './guides.js'
+  import { Selector } from './selector.js'
 
   let roughSvg
   let svgNode
@@ -21,7 +22,9 @@
   
   const xmlns = "http://www.w3.org/2000/svg"
 
-  let hovering = -1       // Index of what we're hovering over. Set to -1 for nothing.
+  // TODO: Concept of a mode: creating, moving, resizing, ...
+  
+  let selector
   let startX
   let startY
   let endX
@@ -29,6 +32,7 @@
   let guides = null       // Gets a value when drawing
   let showMenuCreate
   let showMenuEdit
+  let moving = false
 
   function isShowMenu() {
     return showMenuCreate || showMenuEdit
@@ -48,7 +52,7 @@
   function handleMouseDown(evt) {
     if (evt.button == 0) {
       // Left button press.
-      if (!showMenuCreate && !showMenuEdit) {
+      if (!showMenuCreate && !showMenuEdit && !moving) {
         startX = evt.clientX - svgX
         startY = evt.clientY - svgY
         guides = new Guides(svgNode, startX, startY)
@@ -80,6 +84,15 @@
     showMenuEdit = false
   }
 
+  function handleMenuMove(obj) {
+    const guides = new Guides(svgNode, obj.box[0], obj.box[1])
+    guides.resize(obj.box[2], obj.box[3])
+    startX = endX
+    startY = endY
+    moving = [obj, guides]
+    showMenuEdit = false
+  }
+
   function handleMouseUp(evt) {
     if (showMenuCreate || showMenuEdit) {
       return
@@ -94,18 +107,30 @@
         } else {
           clearGuides()
           // Show edit menu if we have a selected object.
-          if (hovering >= 0) {
+          if (selector.isSelected()) {
             //console.log('object = ', hovering)
-            showMenuEdit = [endX, endY, hovering]
+            showMenuEdit = [endX, endY, selector.object()]
           }
         }
+      } else if (moving) {
+        const [obj, guides ] = moving
+        guides.remove()
+        moving = false
+        obj.box = guides.box()
+        obj.edited = true
+        addObject()
+        // Adjustment because we are affecting the resulting hovering.
+        selector.clear()
+        const pX = evt.clientX - svgX
+        const pY = evt.clientY - svgY
+        selector.select(objects, pX, pY)
       }
     } else if (evt.button == 2) {
       // Right button click.
       if (!guides) {
-        if (hovering >= 0) {
+        if (selector.isSelecting()) {
           // We have a selected object!
-          console.log('selected = ', hovering)
+          console.log('selected = ', selector.object())
         }
       }
     }
@@ -118,47 +143,16 @@
     if (guides) {
       const endX = evt.clientX - svgX
       const endY = evt.clientY - svgY
-      guides.move(endX, endY)
-    } else {
-      const pX = evt.clientX - svgX
-      const pY = evt.clientY - svgY
-      const idx = findObject(pX, pY)
-      if (hovering !== idx) {
-        // Previous hovering state is different than current.
-        let hover
-        if (hovering < 0) {
-          // We had no hovering before, we probably need to create one.
-          hover = document.createElementNS(xmlns, 'rect')
-          svgNode.appendChild(hover)
-          hover.setAttribute('id', 'hovering')
-          hover.setAttribute('x', 0)
-          hover.setAttribute('y', 0)
-          hover.setAttribute('width', 0)
-          hover.setAttribute('height', 0)
-          hover.setAttribute('stroke', '#003eff')
-          hover.setAttribute('stroke-dasharray', '5 10')
-          hover.setAttribute('fill', 'none')
-        } else {
-          hover = document.getElementById('hovering')
-        }
-        if (idx < 0) {
-          // We need to kill the hovering element.
-          hover.remove()
-        } else {
-          const box = objects[idx].box
-          // We need to move it to the current object.
-          const minX = Math.min(box[0], box[2])
-          const maxX = Math.max(box[0], box[2])
-          const minY = Math.min(box[1], box[3])
-          const maxY = Math.max(box[1], box[3])
-          hover.setAttribute('x', minX - 5)
-          hover.setAttribute('y', minY - 5)
-          hover.setAttribute('width', maxX - minX + 10)
-          hover.setAttribute('height', maxY - minY + 10)
-        }
-        hovering = idx
-      }
+      guides.resize(endX, endY)
+    } else if (moving) {
+      const dx = (evt.clientX - svgX) - startX
+      const dy = (evt.clientY - svgY) - startY
+      const [obj, guides] = moving
+      guides.move(obj.box[0] + dx, obj.box[1] + dy, obj.box[2] + dx, obj.box[3] + dy)
     }
+    const pX = evt.clientX - svgX
+    const pY = evt.clientY - svgY
+    selector.select(objects, pX, pY)
   }
     
   function handleMouseOut(evt) {
@@ -171,30 +165,13 @@
     evt.preventDefault()
   }
   
-  function inObject(x, y, obj) {
-    // TODO: maintain the invariant that [0,1] is always TL and [2,3] always BR.
-    const minX = Math.min(obj.box[0], obj.box[2])
-    const maxX = Math.max(obj.box[0], obj.box[2])
-    const minY = Math.min(obj.box[1], obj.box[3])
-    const maxY = Math.max(obj.box[1], obj.box[3])
-    return x >= minX && x <= maxX && y >= minY && y <= maxY
-  }
-
-  function findObject(x, y) {
-    for (let i = objects.length - 1; i >= 0; i--) {
-      if (inObject(x, y, objects[i])) {
-        return i
-      }
-    }
-    return -1
-  }
-
   function action(node) {
     svgNode = node
     const rect = node.getBoundingClientRect()
     svgX = rect.left
     svgY = rect.top
     roughSvg = rough.svg(node)
+    selector = new Selector(node)
   }
 
 </script>
@@ -223,8 +200,9 @@
   <MenuEdit
     x={showMenuEdit[0]}
     y={showMenuEdit[1]}
-    obj={objects[showMenuEdit[2]]}
+    obj={showMenuEdit[2]}
     updateObject={handleMenuUpdate}
+    moveObject={handleMenuMove}
     cancel={handleMenuCancel}
     />
   {/if}

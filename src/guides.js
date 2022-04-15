@@ -7,6 +7,8 @@ export class Guides {
     svgNode.appendChild(this._drawer)
     this._startX = x
     this._startY = y
+    this._endX = x
+    this._endY = y
     const rect = document.createElementNS(xmlns, 'rect')
     this._drawer.appendChild(rect)
     rect.setAttribute('id', 'rect')
@@ -59,13 +61,25 @@ export class Guides {
     text.setAttribute('opacity', '0.5')
   }
 
-  move(tx, ty) {
+  box() {
+    return [this._startX, this._startY, this._endX, this._endY]
+  }
+  
+  resize(tx, ty) {
+    this.move(this._startX, this._startY, tx, ty)
+  }
+
+  move(sx, sy, tx, ty) {
     // Find top-left corner.
-    const tlx = Math.min(this._startX, tx)
-    const tly = Math.min(this._startY, ty)
+    this._startX = sx
+    this._startY = sy
+    this._endX = tx
+    this._endY = ty
+    const tlx = Math.min(sx, tx)
+    const tly = Math.min(sy, ty)
     // Find width and height.
-    const width = Math.abs(tx - this._startX)
-    const height = Math.abs(ty - this._startY)
+    const width = Math.abs(tx - sx)
+    const height = Math.abs(ty - sy)
     const rect = document.getElementById('rect')
     rect.setAttribute('x', tlx)
     rect.setAttribute('y', tly)
@@ -95,13 +109,13 @@ export class Guides {
       line2.setAttribute('x2', tlx + margin + height)
       line2.setAttribute('y2', tly + height)
     }
-    line3.setAttribute('x1', this._startX)
-    line3.setAttribute('y1', this._startY)
+    line3.setAttribute('x1', sx)
+    line3.setAttribute('y1', sy)
     line3.setAttribute('x2', tx)
     line3.setAttribute('y2', ty)
     const text = document.getElementById('text')
-    text.setAttribute('x', (this._startX + tx) / 2)
-    text.setAttribute('y', (this._startY + ty) / 2)
+    text.setAttribute('x', (sx + tx) / 2)
+    text.setAttribute('y', (sy + ty) / 2)
   }
 
   updateText(str) {
