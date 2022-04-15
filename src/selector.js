@@ -81,9 +81,11 @@ export class Selector {
   }
 
   clear() {
-    this._hover.remove()
-    this._hover = null
-    this._object = null
+    if (this.isSelected()) { 
+      this._hover.remove()
+      this._hover = null
+      this._object = null
+    }
   }
 }
 
