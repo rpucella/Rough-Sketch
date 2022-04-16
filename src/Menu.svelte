@@ -28,7 +28,6 @@
     const rect = menu.getBoundingClientRect()
     const width = document.documentElement.clientWidth
     const height = document.documentElement.clientHeight
-    console.log(rect, width, height)
     if (rect.left + rect.width > width) {
       menu.style.left = `${width - rect.width - 4}px`
     }
