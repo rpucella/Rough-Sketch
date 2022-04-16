@@ -89,6 +89,7 @@
     link.dispatchEvent(evt)
     link.remove()
   }
+
 </script>
 
 <svelte:head>
@@ -118,6 +119,7 @@
     <Icon src="assets/icons/download.svg" width="1.5em" clickFn={hasObjects && downloadDiagram} />
     <!-- <Icon src="assets/icons/help.svg" width="1.5em" /> -->
     <!-- <Icon src="assets/icons/settings.svg" width="1.5em" /> -->
+    <Icon src="assets/icons/github.svg" width="1.5em" href="https://github.com/rpucella/Rough-Sketch" />
   </div>
   <DiagramEditor objects={objects} addObject={addObject} deleteObject={deleteObject} />
 </main>
