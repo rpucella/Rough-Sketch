@@ -1,7 +1,7 @@
 
 <script>
 
-  import { onDestroy } from 'svelte'
+  import { onDestroy, afterUpdate } from 'svelte'
   export let x
   export let y
   export let name
@@ -22,10 +22,24 @@
       }
     }
   }
+
+  let menu
+  afterUpdate(() => {
+    const rect = menu.getBoundingClientRect()
+    const width = document.documentElement.clientWidth
+    const height = document.documentElement.clientHeight
+    console.log(rect, width, height)
+    if (rect.left + rect.width > width) {
+      menu.style.left = `${width - rect.width - 4}px`
+    }
+    if (rect.top + rect.height > height) {
+      menu.style.top = `${height - rect.height - 4}px`
+    }
+  })
 </script>
 
 <div class="background" on:click={cancel}>
-  <div class="menu" style:--position-x={x} style:--position-y={y}>
+  <div class="menu" style:--position-x={x} style:--position-y={y} bind:this={menu}>
     <div class="title" style:--color={color}>{name}</div>
     {#each content as entry}
       {#if entry.type === 'option'}
@@ -59,14 +73,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 8em;
   }
 
   div.title {
-    padding: 4px;
+    padding: 4px 8px;
     cursor: pointer;
     flex: 1;
-    width: calc(100% - 8px);
+    width: calc(100% - 16px);
     text-align: center;
     text-transform: uppercase;
     font-weight: bold;
@@ -82,19 +95,21 @@
   }
 
   div.option {
-    padding: 4px;
+    padding: 4px 8px;
     cursor: pointer;
     flex: 1;
-    width: calc(100% - 8px);
+    width: calc(100% - 16px);
     text-align: left;
+    white-space: nowrap;
   }
 
   div.unavailable {
     opacity: 0.5;
-    padding: 4px;
+    padding: 4px 8px;
     flex: 1;
-    width: calc(100% - 8px);
+    width: calc(100% - 16px);
     text-align: left;
+    white-space: nowrap;
   }
 
   div.option:hover {
