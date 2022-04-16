@@ -50,14 +50,14 @@
       fun: () => makeObject('text', text),
       name: 'Text'
     },
-    {
-      type: 'separator'
-    },
-    {
-      type: 'option',
-      fun: cancel,
-      name: 'Cancel'
-    },
+    // {
+    //   type: 'separator'
+    // },
+    // {
+    //   type: 'option',
+    //   fun: cancel,
+    //   name: 'Cancel'
+    // },
   ]
 
   let chars = []

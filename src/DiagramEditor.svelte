@@ -48,6 +48,13 @@
     guides.updateText(str)
   }
 
+  function updateObjectText(obj, str) {
+    // Note that this makes the object "redraw" itself so it looks like it wiggles around as you type.
+    obj.text = str
+    obj.editedText = true
+    addObject()
+  }
+
   function clearGuides() {
     if (guides) { 
       guides.remove()
@@ -241,6 +248,7 @@
     moveObject={handleMenuMove}
     deleteObject={handleMenuDelete}
     resizeObject={handleMenuResize}
+    updateText={updateObjectText}
     cancel={handleMenuCancel}
     />
   {/if}

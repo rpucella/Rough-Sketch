@@ -49,6 +49,7 @@
   function createText(cxy, txt, target) {
     // First draw the text in white with a thick pen (background).
     const rtback = document.createElementNS(xmlns, 'text')
+    ///rtback.classSet.add('background')
     rtback.setAttribute('x', cxy[0])
     rtback.setAttribute('y', cxy[1])
     rtback.setAttribute('dy', '0.35em')
@@ -60,6 +61,7 @@
     target.appendChild(rtback)
     // Then draw the actual text in the space created.
     const rt = document.createElementNS(xmlns, 'text')
+    ///rtback.classSet.add('foreground')
     rt.setAttribute('x', cxy[0])
     rt.setAttribute('y', cxy[1])
     rt.setAttribute('dy', '0.35em')
@@ -111,9 +113,7 @@
     case 'text':
       break
     }
-    if (obj.text) {
-      createText([(obj.box[0] + obj.box[2]) / 2, (obj.box[1] + obj.box[3]) / 2], obj.text, target)
-    }
+    createText([(obj.box[0] + obj.box[2]) / 2, (obj.box[1] + obj.box[3]) / 2], obj.text, target)
   }
 
   function clearChildren() {
@@ -139,6 +139,11 @@
       delete obj.edited
       clearChildren()
       drawObject(obj, gNode)
+    } else if (obj.editedText) {
+      // Reach directly into the object and update the text.
+      gNode.querySelectorAll('text').forEach(n => {
+        n.textContent = obj.text
+      })
     }
   })
   

@@ -1,6 +1,7 @@
 
 <script>
 
+  import { onDestroy } from 'svelte'
   import Menu from './Menu.svelte'
   
   export let x
@@ -11,6 +12,7 @@
   export let deleteObject
   export let resizeObject
   export let cancel
+  export let updateText
 
   let options = [
     {
@@ -79,14 +81,14 @@
       name: '&rarr; Text',
       fun: () => changeType('text')
     },
-    {
-      type: 'separator'
-    },
-    {
-      type: 'option',
-      name: 'Cancel',
-      fun: cancel
-    }
+    // {
+    //   type: 'separator'
+    // },
+    // {
+    //   type: 'option',
+    //   name: 'Cancel',
+    //   fun: cancel
+    // }
   ]
 
   function changeType(newType) {
@@ -108,6 +110,33 @@
   function resize(evt) {
     resizeObject(obj, evt.clientX, evt.clientY)
   }
+
+  let chars = [...obj.text]
+  let text = obj.text
+
+  function handleKey(evt){
+    evt.preventDefault()
+    if (evt.key.length == 1 || (evt.key.length > 1 && /[^a-zA-Z0-9]/.test(evt.key))) {
+      chars.push(evt.key)
+      text = chars.join('')
+      updateText(obj, text)
+    } else if (evt.key === 'Spacebar') {
+      chars.push(' ')
+      text = chars.join('')
+      updateText(obj, text)
+    } else if (evt.key === 'Backspace') {
+      chars.pop()
+      text = chars.join('')
+      updateText(obj, text)
+    } else if (evt.key === 'Escape') {
+      cancel()
+    }
+  }
+
+  document.addEventListener('keydown', handleKey)
+
+  onDestroy(() => { document.removeEventListener('keydown', handleKey) })
+  
 </script>
 
 <Menu
