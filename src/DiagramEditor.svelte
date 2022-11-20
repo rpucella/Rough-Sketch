@@ -9,6 +9,7 @@
   import { nanoid } from 'nanoid'
   import MenuCreate from "./MenuCreate.svelte"
   import MenuEdit from "./MenuEdit.svelte"
+  import MenuChange from "./MenuChange.svelte"
   import Object from "./Object.svelte"
   import { Guides } from './guides.js'
   import { Selector } from './selector.js'
@@ -37,11 +38,12 @@
   let guides = null       // Gets a value when drawing
   let showMenuCreate
   let showMenuEdit
+  let showMenuChange
   let moving = false
   let resizing = false
 
   function isShowMenu() {
-    return showMenuCreate || showMenuEdit
+    return showMenuCreate || showMenuEdit || showMenuChange
   }
 
   function updateGuidesText(str) {
@@ -65,7 +67,7 @@
   function handleMouseDown(evt) {
     if (evt.button == 0) {
       // Left button press.
-      if (!showMenuCreate && !showMenuEdit && !moving && !resizing) {
+      if (!showMenuCreate && !showMenuEdit && !showMenuChange && !moving && !resizing) {
         startX = evt.clientX - svgX
         startY = evt.clientY - svgY
         guides = new Guides(svgNode, startX, startY)
@@ -77,6 +79,7 @@
     clearGuides()
     showMenuCreate = false
     showMenuEdit = false
+    showMenuChange = false
   }
 
   function handleMenuObject(typ, txt) {
@@ -94,7 +97,7 @@
   function handleMenuUpdate(obj) {
     // Adding a null object is just a refresh.
     addObject()
-    showMenuEdit = false
+    showMenuChange = false
   }
 
   function handleMenuMove(obj, clientX, clientY) {
@@ -124,6 +127,11 @@
     const pX = clientX - svgX
     const pY = clientY - svgY
     selector.select(objects, pX, pY)
+    showMenuEdit = false
+  }
+
+  function handleMenuChange() {
+    showMenuChange = showMenuEdit
     showMenuEdit = false
   }
 
@@ -244,15 +252,25 @@
     x={showMenuEdit[0]}
     y={showMenuEdit[1]}
     obj={showMenuEdit[2]}
-    updateObject={handleMenuUpdate}
     moveObject={handleMenuMove}
     deleteObject={handleMenuDelete}
     resizeObject={handleMenuResize}
     updateText={updateObjectText}
+    menuChange={handleMenuChange}
     cancel={handleMenuCancel}
     />
   {/if}
 
+{#if showMenuChange}
+  <MenuChange
+    x={showMenuChange[0]}
+    y={showMenuChange[1]}
+    obj={showMenuChange[2]}
+    updateObject={handleMenuUpdate}
+     cancel={handleMenuCancel}
+    />
+  {/if}
+  
 <style>
   svg {
     width: calc(100vw - 16px);

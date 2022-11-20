@@ -7,12 +7,12 @@
   export let x
   export let y
   export let obj
-  export let updateObject
   export let moveObject
   export let deleteObject
   export let resizeObject
   export let cancel
   export let updateText
+  export let menuChange
 
   let options = [
     {
@@ -30,6 +30,12 @@
       type: 'option',
       fun: del
     },
+    {
+      name: 'Change',
+      type: 'option',
+      fun: change
+    }
+    /*
     {
       name: 'Forward',
       type: 'unavailable'
@@ -89,15 +95,8 @@
     //   name: 'Cancel',
     //   fun: cancel
     // }
+    */
   ]
-
-  function changeType(newType) {
-    ///console.log('object = ', obj)
-    obj.type = newType
-    obj.edited = true
-    updateObject(obj)
-    ///console.log('object = ', obj)
-  }
 
   function move(evt) {
     moveObject(obj, evt.clientX, evt.clientY)
@@ -109,6 +108,10 @@
 
   function resize(evt) {
     resizeObject(obj, evt.clientX, evt.clientY)
+  }
+
+  function change(evt) {
+    menuChange()
   }
 
   let chars = [...obj.text]

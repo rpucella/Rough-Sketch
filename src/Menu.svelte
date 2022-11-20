@@ -9,6 +9,8 @@
   export let content
   export let cancel
 
+/* No longer seems used
+   
   function clickOutside(node) {
     const handleClick = (event) => {
       if (!node.contains(event.target)) {
@@ -22,7 +24,8 @@
       }
     }
   }
-
+*/
+  
   let menu
   afterUpdate(() => {
     const rect = menu.getBoundingClientRect()
@@ -35,21 +38,33 @@
       menu.style.top = `${height - rect.height - 4}px`
     }
   })
+
+  const pi = 3.1415921
+  let positions = []
+  for (let i = 0; i < content.length; i++) {
+    const x = Math.cos(2 * i * pi / content.length)
+    const y = Math.sin(2 * i * pi / content.length)
+    const xnext = Math.cos(2 * (i + 1) * pi / content.length)
+    const ynext = Math.sin(2 * (i + 1) * pi / content.length)
+    content[i].x= x
+    content[i].y = y
+    content[i].mx = Math.cos(2 * (i + 0.5) * pi / content.length)
+    content[i].my = Math.sin(2 * (i + 0.5) * pi / content.length)
+    content[i].path = `M ${50 + 20 * x} ${50 + 20 * y} L ${50 + 50 * x} ${50 + 50 * y} A 50 50 45 0 1 ${50 + 50 * xnext} ${50 + 50 * ynext} L ${50 + 20 * xnext} ${50 + 20 * ynext} A 20 20 -45 0 0 ${50 + 20 * x} ${50 + 20 * y}`
+  }
+
 </script>
 
 <div class="background" on:click={cancel}>
-  <div class="menu" style:--position-x={x} style:--position-y={y} bind:this={menu}>
-    <div class="title" style:--color={color}>{name}</div>
+  <svg class="menu" width="100px" height="100px" viewPort="0 0 100 100" style:--position-x={x} style:--position-y={y} bind:this={menu}>
+    <circle cx={50} cy={50} r={20} />
     {#each content as entry}
-      {#if entry.type === 'option'}
-        <div class="option" on:click={entry.fun}>{@html entry.name}</div>
-      {:else if entry.type === 'unavailable'}
-        <div class="unavailable">{@html entry.name}</div>
-      {:else if entry.type === 'separator'}
-        <div class="separator" />
-      {/if}
+    <g class="option" on:click={entry.fun} style:--color={color}>
+      <path d={entry.path} />
+      <text x={50 + 35 * entry.mx} y={50 + 35 * entry.my} dy="0.35em" text-anchor="middle" stroke={color}>{ entry.name[0] }{entry.name[1]}</text>
+    </g>
     {/each}
-  </div>
+  </svg>
 </div>
   
 <style>
@@ -62,18 +77,30 @@
     z-index: 50;
   }
   
-  div.menu {
+  svg.menu {
     position: fixed;
-    left: calc(var(--position-x) * 1px);
-    top: calc(var(--position-y) * 1px);
+    left: calc(var(--position-x) * 1px - 50px);
+    top: calc(var(--position-y) * 1px - 50px);
     z-index: 100;
-    background-color: white;
-    border: 1px solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
   }
 
+  svg circle {
+    fill: white;
+    stroke: none;
+  }
+  
+  svg g.option {
+    fill: white;
+    fill-opacity: 0.5;
+    stroke: var(--color);
+  }
+
+  svg g.option:hover {
+    fill-opacity: 0.1;
+    fill: var(--color);
+  }
+
+  /*
   div.title {
     padding: 4px 8px;
     cursor: pointer;
@@ -115,5 +142,6 @@
     background-color: black;
     color: white;
   }
+*/
 
 </style>
