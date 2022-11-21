@@ -13,37 +13,44 @@
     {
       type: 'option',
       fun: () => makeObject('rectangle', text),
-      name: 'Rectangle'
+      name: 'Rectangle',
+      icon: "assets/icons/square-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('ellipse', text),
-      name: 'Ellipse'
+      name: 'Ellipse',
+      icon: "/assets/icons/ellipse-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('circle', text),
-      name: 'Circle'
+      name: 'Circle',
+      icon: "assets/icons/circle-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('line', text),
-      name: 'Line'
+      name: 'Line',
+      icon: "assets/icons/line-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('arrow', text),
-      name: 'Arrow'
+      name: 'Arrow',
+      icon: "assets/icons/arrow-right-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('reverse-arrow', text),
-      name: 'R-Arrow'
+      name: 'R-Arrow',
+      icon: "assets/icons/arrow-left-red.svg"
     },
     {
       type: 'option',
       fun: () => makeObject('double-arrow', text),
-      name: 'D-Arrow'
+      name: 'D-Arrow',
+      icon: "assets/icons/arrow-double-red.svg"
     },
     {
       type: 'option',

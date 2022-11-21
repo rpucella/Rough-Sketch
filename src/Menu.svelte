@@ -2,12 +2,20 @@
 <script>
 
   import { onDestroy, afterUpdate } from 'svelte'
+  
+  import Icon from './Icon.svelte'
+  
   export let x
   export let y
   export let name
   export let color
   export let content
   export let cancel
+
+  const inner = 20
+  const outer = 60
+  const size = outer * 2
+  const center = size / 2
 
 /* No longer seems used
    
@@ -50,23 +58,30 @@
     content[i].y = y
     content[i].mx = Math.cos(2 * (i + 0.5) * pi / content.length)
     content[i].my = Math.sin(2 * (i + 0.5) * pi / content.length)
-    content[i].path = `M ${50 + 20 * x} ${50 + 20 * y} L ${50 + 50 * x} ${50 + 50 * y} A 50 50 45 0 1 ${50 + 50 * xnext} ${50 + 50 * ynext} L ${50 + 20 * xnext} ${50 + 20 * ynext} A 20 20 -45 0 0 ${50 + 20 * x} ${50 + 20 * y}`
+    content[i].path = `M ${center + inner * x} ${center + inner * y} L ${center + outer * x} ${center + outer * y} A ${outer} ${outer} 45 0 1 ${center + outer * xnext} ${center + outer * ynext} L ${center + inner * xnext} ${center + inner * ynext} A ${inner} ${inner} -45 0 0 ${center + inner * x} ${center + inner * y}`
   }
 
 </script>
 
 <div class="background" on:click={cancel}>
-  <svg class="menu" width="100px" height="100px" viewPort="0 0 100 100" style:--position-x={x} style:--position-y={y} bind:this={menu}>
-    <circle cx={50} cy={50} r={20} />
+  <svg class="menu" width={size} height={size} viewPort={`0 0 ${size} ${size}`} style:--position-x={x} style:--position-y={y} bind:this={menu}>
+    <circle cx={center} cy={center} r={inner} />
     {#each content as entry}
-    <g class="option" on:click={entry.fun} style:--color={color}>
-      <path d={entry.path} />
-      <text x={50 + 35 * entry.mx} y={50 + 35 * entry.my} dy="0.35em" text-anchor="middle" stroke={color}>{ entry.name[0] }{entry.name[1]}</text>
-    </g>
+      {#if entry.icon}
+        <g class="option" on:click={entry.fun} style:--color={color}>
+          <path d={entry.path} />
+          <image x={center + (inner + (outer - inner) / 2) * entry.mx - 10} y={center + (inner + (outer - inner) / 2) * entry.my - 10} width="20" height="20" href={entry.icon} />
+        </g>
+      {:else}
+        <g class="option" on:click={entry.fun} style:--color={color}>
+          <path d={entry.path} />
+          <text x={center + (inner + (outer - inner) / 2) * entry.mx} y={center + (inner + (outer - inner) / 2) * entry.my} dy="0.35em" text-anchor="middle" stroke={color}>{ entry.name[0] }{entry.name[1]}</text>
+        </g>
+      {/if}
     {/each}
   </svg>
 </div>
-  
+
 <style>
   div.background {
     position: fixed;

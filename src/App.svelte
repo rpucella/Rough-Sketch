@@ -130,24 +130,22 @@
       <div>
         Choose a diagram to upload:
       </div>
-        <input type="file" bind:files>
-        {#if showUploadDB === D_ERROR}
-          <div class="error">
-            There is a problem with the JSON file.
-          </div>
-        {/if}
+      <input type="file" bind:files>
+      {#if showUploadDB === D_ERROR}
+        <div class="error">
+          There is a problem with the JSON file.
+        </div>
+      {/if}
       <div>
         {#if files}
           <button on:click={uploadDiagram}>Upload</button>
         {:else}
           <button disabled>Upload</button>
-          {/if}
+        {/if}
       </div>
     </div>
-    </Dialog>
-  {/if}
-<div>
-</div>
+  </Dialog>
+{/if}
 
 <style>
   
