@@ -18,21 +18,25 @@
     {
       name: 'Move',
       type: 'option',
+      icon: 'assets/icons/move.svg',
       fun: move
     },
     {
       name: 'Resize',
       type: 'option',
+      icon: 'assets/icons/resize.svg',
       fun: resize
     },
     {
       name: 'Delete',
       type: 'option',
+      icon: 'assets/icons/delete.svg',
       fun: del
     },
     {
       name: 'Change',
       type: 'option',
+      icon: 'assets/icons/change.svg',
       fun: change
     }
     /*
@@ -43,59 +47,7 @@
     {
       name: 'Back',
       type: 'unavailable'
-    },
-    {
-      type: 'separator'
-    },
-    {
-      type: 'option',
-      name: '&rarr; Rectangle',
-      fun: () => changeType('rectangle')
-    },
-    {
-      type: 'option',
-      name: '&rarr; Ellipse',
-      fun: () => changeType('ellipse')
-    },
-    {
-      type: 'option',
-      name: '&rarr; Circle',
-      fun: () => changeType('circle')
-    },
-    {
-      type: 'option',
-      name: '&rarr; Line',
-      fun: () => changeType('line')
-    },
-    {
-      type: 'option',
-      name: '&rarr; Arrow',
-      fun: () => changeType('arrow')
-    },
-    {
-      type: 'option',
-      name: '&rarr; R-Arrow',
-      fun: () => changeType('reverse-arrow')
-    },
-    {
-      type: 'option',
-      name: '&rarr; D-Arrow',
-      fun: () => changeType('double-arrow')
-    },
-    {
-      type: 'option',
-      name: '&rarr; Text',
-      fun: () => changeType('text')
-    },
-    // {
-    //   type: 'separator'
-    // },
-    // {
-    //   type: 'option',
-    //   name: 'Cancel',
-    //   fun: cancel
-    // }
-    */
+    }, */
   ]
 
   function move(evt) {

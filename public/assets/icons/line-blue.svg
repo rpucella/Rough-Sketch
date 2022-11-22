@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+<style> path { stroke: blue; fill: blue; fill-opacity: 0.4; } </style>
+
+
+    <symbol xmlns="http://www.w3.org/2000/svg" id="rough_minus" viewBox="0 0 45 52">
+  <title>minus</title>
+  <path class="rough-outline" fill="none" d="M40.5 20.2M42.4 21.9C32.1 20.5 25.1 19.6 4.2 19.4M41.3 21.1C32 20.3 22.2 21.1 2.9 21.2M3.2 20.8C1.7 22.1 1.1 21.4 1.3 22.7M1.8 20.7C0.2 22.6 -0.8 23 0.4 23.4M-0.1 24.1C0.1 25 -0.2 26.6 -0.2 27M-0.1 23.9C0 25.2 0 26.3 0.1 27.1M0 27.2C0 27.8 0 29.5 2.4 31.5M0.3 26.8C-0.7 28.4 3.1 29.2 1.5 28.7M2.4 29.8C11.7 31.3 19.1 28.8 41.8 31.8M3.5 30.4C13.3 31 22.8 30.8 42.1 30.1M41.6 30.4C42.6 30.3 43.7 28.6 45 26.8M42.3 29.1C42.8 30.8 43.9 28.6 44.7 26M44.8 27C44.8 26.2 44.6 25.5 44.7 24.2M44.7 27.3C44.8 26.3 44.8 25.6 44.7 24.1M44.8 24C45.7 23.3 43.5 19.5 41.1 21.9M44.2 24.4C45.2 23.9 42.2 20.6 41.9 21.6M41.6 20.8C41.6 20.8 41.6 20.8 41.6 20.8M41.6 20.8C41.6 20.8 41.6 20.8 41.6 20.8"/>
+  <path class="rough-mask" stroke="none" d="M41.6 20.8H3.2c-1.8 0 -3.2 1.4 -3.2 3.2v3.2c0 1.8 1.4 3.2 3.2 3.2h38.4c1.8 0 3.2 -1.4 3.2 -3.2v-3.2c0 -1.8 -1.4 -3.2 -3.2 -3.2z"/>
+</symbol>
+
+    <use xlink:href="#rough_minus"></use>
+
+  </svg>
