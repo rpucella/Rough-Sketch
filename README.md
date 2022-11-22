@@ -34,3 +34,12 @@ To run the production build:
 (This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's
 `dependencies` so that the app will work when you deploy to some platforms.)
 
+
+
+## How to Deploy on Github
+
+Copy all files *except* `index.html` from `public/` to `gh-pages/` and push to GitHub.
+
+The `static.yaml` deployment script in `.github/workflows/` will automatically pick it up and deploy to GitHut Pages.
+
+TODO: create a `yarn run deploy` script to do the above
