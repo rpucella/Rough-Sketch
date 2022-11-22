@@ -266,7 +266,8 @@
     y={showMenuChange[1]}
     obj={showMenuChange[2]}
     updateObject={handleMenuUpdate}
-     cancel={handleMenuCancel}
+    cancel={handleMenuCancel}
+    updateText={updateObjectText}
     />
   {/if}
   

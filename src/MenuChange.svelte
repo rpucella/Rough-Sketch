@@ -1,13 +1,13 @@
 
 <script>
 
-  import { onDestroy } from 'svelte'
   import Menu from './Menu.svelte'
-  
+  import InputLabel from './InputLabel.svelte'
   export let x
   export let y
   export let obj
   export let updateObject
+  export let updateText
   export let cancel
 
   let options = [
@@ -62,11 +62,13 @@
   ]
 
   function changeType(newType) {
-    ///console.log('object = ', obj)
     obj.type = newType
     obj.edited = true
     updateObject(obj)
-    ///console.log('object = ', obj)
+  }
+
+  function updateLabel(t) {
+    updateText(obj, t)
   }
 
 </script>
@@ -78,3 +80,5 @@
   cancel={cancel}
   name='Change'
   />
+
+<InputLabel updateText={updateLabel} value={obj.text} />
