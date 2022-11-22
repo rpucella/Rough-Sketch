@@ -10,6 +10,7 @@
   export let moveObject
   export let deleteObject
   export let resizeObject
+  export let cloneObject
   export let cancel
   export let updateText
   export let menuChange
@@ -38,7 +39,13 @@
       type: 'option',
       icon: 'assets/icons/change.svg',
       fun: change
-    }
+    },
+    {
+      name: 'Clone',
+      type: 'option',
+      icon: 'assets/icons/clone.svg',
+      fun: clone
+    },
   ]
 
   function move(evt) {
@@ -55,6 +62,10 @@
 
   function change(evt) {
     menuChange()
+  }
+
+  function clone(evt) {
+    cloneObject(obj, evt.clientX, evt.ClientY)
   }
 
   function updateLabel(t) {

@@ -25,6 +25,8 @@
   // How many pixels' fuzz do we allow we recognizing that we're creating
   // an object as opposed to click on an existing object.
   const fuzz = 4
+
+  const cloneOffset = 24
   
   const xmlns = "http://www.w3.org/2000/svg"
 
@@ -118,6 +120,26 @@
     guides.resize(endX, endY)
     resizing = [obj, guides]
     showMenuEdit = false
+  }
+
+  function handleMenuClone(obj, clientX, clientY) {
+    const newObj = {
+      id: nanoid(),
+      type: obj.type,
+      box: [
+        obj.box[0] + cloneOffset,
+        obj.box[1] + cloneOffset,
+        obj.box[2] + cloneOffset,
+        obj.box[3] + cloneOffset
+      ],
+      text: obj.text
+    }
+    addObject(newObj)
+    selector.clear()
+    const pX = clientX - svgX
+    const pY = clientY - svgY
+    selector.select(objects, pX, pY)
+   showMenuEdit = false
   }
 
   function handleMenuDelete(obj, clientX, clientY) {
@@ -254,6 +276,7 @@
     moveObject={handleMenuMove}
     deleteObject={handleMenuDelete}
     resizeObject={handleMenuResize}
+    cloneObject={handleMenuClone}
     updateText={updateObjectText}
     menuChange={handleMenuChange}
     cancel={handleMenuCancel}
