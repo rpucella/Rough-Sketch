@@ -55,7 +55,8 @@
     {
       type: 'option',
       fun: () => makeObject('text', text),
-      name: 'Text'
+      name: 'Text',
+      icon: "assets/icons/text-red.svg"
     },
     // {
     //   type: 'separator'
