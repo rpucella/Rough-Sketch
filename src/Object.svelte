@@ -12,6 +12,8 @@
   
   const xmlns = "http://www.w3.org/2000/svg"
 
+  const strokeWidth = 2
+
   function interceptRadius(cxy, oxy, r) {
     const dx = cxy[0] - oxy[0]
     const dy = cxy[1] - oxy[1]
@@ -40,8 +42,8 @@
     const inter = interceptRadius(end, start, len)
     const p1 = rotateAbout(inter, end, Math.PI / 6)
     const p2 = rotateAbout(inter, end, -Math.PI / 6)
-    const r1 = roughSvg.line(endX, endY, p1[0], p1[1])
-    const r2 = roughSvg.line(endX, endY, p2[0], p2[1])
+    const r1 = roughSvg.line(endX, endY, p1[0], p1[1], {strokeWidth})
+    const r2 = roughSvg.line(endX, endY, p2[0], p2[1], {strokeWidth})
     target.appendChild(r1)
     target.appendChild(r2)
   }
@@ -79,33 +81,33 @@
     switch (obj.type) {
     case 'rectangle':
       // Set fill to white or something...
-      const rr = roughSvg.rectangle(left, top, width, height)
+      const rr = roughSvg.rectangle(left, top, width, height, {strokeWidth})
       target.appendChild(rr)
       break
     case 'circle':
-      const rc = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width))
+      const rc = roughSvg.circle((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, Math.min(height, width), {strokeWidth})
       target.appendChild(rc)
       break
     case 'ellipse':
-      const re = roughSvg.ellipse((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, width, height)
+      const re = roughSvg.ellipse((obj.box[2] + obj.box[0]) / 2, (obj.box[3] + obj.box[1]) / 2, width, height, {strokeWidth})
       target.appendChild(re)
       break
     case 'line':
-      const rl = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+      const rl = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3], {strokeWidth})
       target.appendChild(rl)
       break
     case 'arrow':
-      const ra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+      const ra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3], {strokeWidth})
       target.appendChild(ra)
       arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]], target)
       break;
     case 'reverse-arrow':
-      const rra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+      const rra = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3], {strokeWidth})
       target.appendChild(rra)
       arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]], target)
       break;
     case 'double-arrow':
-      const rda = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3])
+      const rda = roughSvg.line(obj.box[0], obj.box[1], obj.box[2], obj.box[3], {strokeWidth})
       target.appendChild(rda)
       arrowHead([obj.box[2], obj.box[3]], [obj.box[0], obj.box[1]], target)
       arrowHead([obj.box[0], obj.box[1]], [obj.box[2], obj.box[3]], target)
