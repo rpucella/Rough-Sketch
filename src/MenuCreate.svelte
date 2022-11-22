@@ -20,7 +20,7 @@
       type: 'option',
       fun: () => makeObject('ellipse', text),
       name: 'Ellipse',
-      icon: "/assets/icons/ellipse-red.svg"
+      icon: "assets/icons/ellipse-red.svg"
     },
     {
       type: 'option',
