@@ -2,7 +2,7 @@
 # Rough Sketch
 
 
-A simple web-based diagram sketch using [Svelta](https://svelte.dev/) and the delightful
+A simple web-based diagram sketch using [Svelte](https://svelte.dev/) and the delightful
 [Rough.js](https://roughjs.com/) graphic library.
 
 
