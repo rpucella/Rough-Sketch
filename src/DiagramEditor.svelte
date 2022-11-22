@@ -46,9 +46,9 @@
     return showMenuCreate || showMenuEdit || showMenuChange
   }
 
-  function updateGuidesText(str) {
-    guides.updateText(str)
-  }
+  // function updateGuidesText(str) {
+  //   guides.updateText(str)
+  // }
 
   function updateObjectText(obj, str) {
     // Note that this makes the object "redraw" itself so it looks like it wiggles around as you type.
@@ -243,7 +243,6 @@
     y={showMenuCreate[1]}
     cancel={handleMenuCancel}
     makeObject={handleMenuObject}
-    updateText={updateGuidesText}
     />
   {/if}
 

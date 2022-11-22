@@ -1,8 +1,8 @@
 
 <script>
 
-  import { onDestroy } from 'svelte'
   import Menu from './Menu.svelte'
+  import InputLabel from './InputLabel.svelte'
   
   export let x
   export let y
@@ -39,15 +39,6 @@
       icon: 'assets/icons/change.svg',
       fun: change
     }
-    /*
-    {
-      name: 'Forward',
-      type: 'unavailable'
-    },
-    {
-      name: 'Back',
-      type: 'unavailable'
-    }, */
   ]
 
   function move(evt) {
@@ -66,32 +57,10 @@
     menuChange()
   }
 
-  let chars = [...obj.text]
-  let text = obj.text
-
-  function handleKey(evt){
-    evt.preventDefault()
-    if (evt.key.length == 1 || (evt.key.length > 1 && /[^a-zA-Z0-9]/.test(evt.key))) {
-      chars.push(evt.key)
-      text = chars.join('')
-      updateText(obj, text)
-    } else if (evt.key === 'Spacebar') {
-      chars.push(' ')
-      text = chars.join('')
-      updateText(obj, text)
-    } else if (evt.key === 'Backspace') {
-      chars.pop()
-      text = chars.join('')
-      updateText(obj, text)
-    } else if (evt.key === 'Escape') {
-      cancel()
-    }
+  function updateLabel(t) {
+    updateText(obj, t)
   }
 
-  document.addEventListener('keydown', handleKey)
-
-  onDestroy(() => { document.removeEventListener('keydown', handleKey) })
-  
 </script>
 
 <Menu
@@ -101,3 +70,5 @@
   cancel={cancel}
   name='Edit'
   />
+
+<InputLabel updateText={updateLabel} value={obj.text} />

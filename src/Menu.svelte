@@ -17,23 +17,6 @@
   const size = outer * 2
   const center = size / 2
 
-/* No longer seems used
-   
-  function clickOutside(node) {
-    const handleClick = (event) => {
-      if (!node.contains(event.target)) {
-	node.dispatchEvent(new CustomEvent("outclick"));
-      }
-    }
-    document.addEventListener("click", handleClick)
-    return {
-      destroy() {
-	document.removeEventListener("click", handleClick)
-      }
-    }
-  }
-*/
-  
   let menu
   afterUpdate(() => {
     const rect = menu.getBoundingClientRect()

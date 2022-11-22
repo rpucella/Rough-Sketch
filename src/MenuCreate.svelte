@@ -2,12 +2,11 @@
 <script>
 
   import Menu from './Menu.svelte'
-  import { onDestroy } from 'svelte'
+  import InputLabel from './InputLabel.svelte'
   export let x
   export let y
   export let cancel
   export let makeObject
-  export let updateText
 
   const options = [
     {
@@ -58,41 +57,13 @@
       name: 'Text',
       icon: "assets/icons/text-red.svg"
     },
-    // {
-    //   type: 'separator'
-    // },
-    // {
-    //   type: 'option',
-    //   fun: cancel,
-    //   name: 'Cancel'
-    // },
   ]
 
-  let chars = []
   let text = ''
 
-  function handleKey(evt){
-    evt.preventDefault()
-    if (evt.key.length == 1 || (evt.key.length > 1 && /[^a-zA-Z0-9]/.test(evt.key))) {
-      chars.push(evt.key)
-      text = chars.join('')
-      updateText(text)
-    } else if (evt.key === 'Spacebar') {
-      chars.push(' ')
-      text = chars.join('')
-      updateText(text)
-    } else if (evt.key === 'Backspace') {
-      chars.pop()
-      text = chars.join('')
-      updateText(text)
-    } else if (evt.key === 'Escape') {
-      cancel()
-    }
+  function updateText(t) {
+    text = t
   }
-
-  document.addEventListener('keydown', handleKey)
-
-  onDestroy(() => { document.removeEventListener('keydown', handleKey) })
   
 </script>
 
@@ -104,3 +75,5 @@
   color='red'
   cancel={cancel}
   />
+
+<InputLabel updateText={updateText} />
