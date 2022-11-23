@@ -22,7 +22,7 @@ function findObject(objects, x, y, last) {
   }
   if (last != undefined) {
     // Try again, but from the top.
-    return findObject(obejcts, x, y)
+    return findObject(objects, x, y)
   }
   return [null, 0]
 }
