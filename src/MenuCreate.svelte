@@ -11,53 +11,58 @@
   const options = [
     {
       type: 'option',
-      fun: () => makeObject('rectangle', text),
+      fun: (evt) => make(evt, 'rectangle'),
       name: 'Rectangle',
       icon: "assets/icons/square-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('ellipse', text),
+      fun: (evt) => make(evt, 'ellipse'),
       name: 'Ellipse',
       icon: "assets/icons/ellipse-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('circle', text),
+      fun: (evt) => make(evt, 'circle'),
       name: 'Circle',
       icon: "assets/icons/circle-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('line', text),
+      fun: (evt) => make(evt, 'line'),
       name: 'Line',
       icon: "assets/icons/line-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('arrow', text),
+      fun: (evt) => make(evt, 'arrow'),
       name: 'Arrow',
       icon: "assets/icons/arrow-right-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('reverse-arrow', text),
+      fun: (evt) => make(evt, 'reverse-arrow'),
       name: 'R-Arrow',
       icon: "assets/icons/arrow-left-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('double-arrow', text),
+      fun: (evt) => make(evt, 'double-arrow'),
       name: 'D-Arrow',
       icon: "assets/icons/arrow-double-red.svg"
     },
     {
       type: 'option',
-      fun: () => makeObject('text', text),
+      fun: (evt) => make(evt, 'text'),
       name: 'Text',
       icon: "assets/icons/text-red.svg"
     },
   ]
+
+  function make(evt, type) {
+    evt.stopPropagation()
+    makeObject(type, text)
+  }
 
   let text = ''
 

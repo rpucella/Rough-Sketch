@@ -139,7 +139,12 @@
     const pX = clientX - svgX
     const pY = clientY - svgY
     selector.select(objects, pX, pY)
-   showMenuEdit = false
+    showMenuEdit = false
+  }
+
+  function handleMenuNext(obj, clientX, clientY) {
+    const pos = selector.next(objects)
+    showMenuEdit = pos ? [pos[0], pos[1], selector.object()] : false
   }
 
   function handleMenuDelete(obj, clientX, clientY) {
@@ -158,7 +163,7 @@
   }
 
   function handleMouseUp(evt) {
-    if (showMenuCreate || showMenuEdit) {
+    if (showMenuCreate || showMenuEdit || showMenuChange) {
       return
     }
     endX = evt.clientX - svgX
@@ -209,7 +214,7 @@
   }
 
   function handleMouseMove(evt) {
-    if (showMenuCreate || showMenuEdit) {
+    if (showMenuCreate || showMenuEdit || showMenuChange) {
       return
     }
     const endX = evt.clientX - svgX
@@ -277,6 +282,7 @@
     deleteObject={handleMenuDelete}
     resizeObject={handleMenuResize}
     cloneObject={handleMenuClone}
+    selectNextObject={handleMenuNext}
     updateText={updateObjectText}
     menuChange={handleMenuChange}
     cancel={handleMenuCancel}

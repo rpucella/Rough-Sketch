@@ -11,20 +11,32 @@ function inObject(x, y, obj) {
   return x >= minX && x <= maxX && y >= minY && y <= maxY
 }
 
-function findObject(objects, x, y) {
-  for (let i = objects.length - 1; i >= 0; i--) {
+function findObject(objects, x, y, last) {
+  ///console.log('Searching starting at', last)
+  const start = last || objects.length
+  for (let i = start - 1; i >= 0; i--) {
     if (inObject(x, y, objects[i])) {
-      return objects[i]
+      ///console.log('found in', i)
+      return [objects[i], i]
     }
   }
-  return null
+  if (last != undefined) {
+    // Try again, but from the top.
+    return findObject(obejcts, x, y)
+  }
+  return [null, 0]
 }
 
 export class Selector {
   constructor(svgNode) {
     this._node = svgNode
     this._hover = null
+    // The object we have selected.
     this._object = null
+    this._index = null
+    // The click position of the selection.
+    this._px = 0
+    this._py = 0
   }
 
   isSelected() {
@@ -32,8 +44,24 @@ export class Selector {
   }
 
   select(objects, pX, pY) {
-    const obj = findObject(objects, pX, pY)
+    this._px = pX
+    this._py = pY
+    const [obj, idx] = findObject(objects, pX, pY)
+    this._index = idx
     this.selectObject(obj)
+  }
+
+  next(objects) {
+    // Nothing selected, so this has no effect.
+    if (!this.isSelected()) {
+      return false
+    }
+    this.clear()
+    // Find next selected object.
+    const [obj, idx] = findObject(objects, this._px, this._py, this._index)
+    this._index = idx
+    this.selectObject(obj)
+    return this.isSelected() ? [this._px, this._py] : false
   }
 
   selectObject(obj) {

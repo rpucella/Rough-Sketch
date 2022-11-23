@@ -11,6 +11,7 @@
   export let deleteObject
   export let resizeObject
   export let cloneObject
+  export let selectNextObject
   export let cancel
   export let updateText
   export let menuChange
@@ -46,26 +47,42 @@
       icon: 'assets/icons/clone.svg',
       fun: clone
     },
+    {
+      name: 'Next',
+      type: 'option',
+      icon: 'assets/icons/select-down.svg',
+      fun: next
+    }
   ]
 
   function move(evt) {
+    evt.stopPropagation()
     moveObject(obj, evt.clientX, evt.clientY)
   }
 
   function del(evt) {
+    evt.stopPropagation()
     deleteObject(obj, evt.clientX, evt.clientY)
   }
 
   function resize(evt) {
+    evt.stopPropagation()
     resizeObject(obj, evt.clientX, evt.clientY)
   }
 
   function change(evt) {
+    evt.stopPropagation()
     menuChange()
   }
 
   function clone(evt) {
+    evt.stopPropagation()
     cloneObject(obj, evt.clientX, evt.ClientY)
+  }
+
+  function next(evt) {
+    evt.stopPropagation()
+    selectNextObject(obj, evt.clientX, evt.ClientY)
   }
 
   function updateLabel(t) {

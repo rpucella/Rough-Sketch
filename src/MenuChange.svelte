@@ -15,53 +15,54 @@
       type: 'option',
       name: 'Rectangle',
       icon: 'assets/icons/square-blue.svg',
-      fun: () => changeType('rectangle')
+      fun: (evt) => changeType(evt,'rectangle')
     },
     {
       type: 'option',
       name: 'Ellipse',
       icon: 'assets/icons/ellipse-blue.svg',
-      fun: () => changeType('ellipse')
+      fun: (evt) => changeType(evt,'ellipse')
     },
     {
       type: 'option',
       name: 'Circle',
       icon: 'assets/icons/circle-blue.svg',
-      fun: () => changeType('circle')
+      fun: (evt) => changeType(evt,'circle')
     },
     {
       type: 'option',
       name: 'Line',
       icon: 'assets/icons/line-blue.svg',
-      fun: () => changeType('line')
+      fun: (evt) => changeType(evt,'line')
     },
     {
       type: 'option',
       name: 'Arrow',
       icon: 'assets/icons/arrow-right-blue.svg',
-      fun: () => changeType('arrow')
+      fun: (evt) => changeType(evt,'arrow')
     },
     {
       type: 'option',
       name: 'R-Arrow',
       icon: 'assets/icons/arrow-left-blue.svg',
-      fun: () => changeType('reverse-arrow')
+      fun: (evt) => changeType(evt,'reverse-arrow')
     },
     {
       type: 'option',
       name: 'D-Arrow',
       icon: 'assets/icons/arrow-double-blue.svg',
-      fun: () => changeType('double-arrow')
+      fun: (evt) => changeType(evt,'double-arrow')
     },
     {
       type: 'option',
       name: 'Text',
       icon: 'assets/icons/text-blue.svg',
-      fun: () => changeType('text')
+      fun: (evt) => changeType(evt,'text')
     },
   ]
 
-  function changeType(newType) {
+  function changeType(evt, newType) {
+    evt.stopPropagation()
     obj.type = newType
     obj.edited = true
     updateObject(obj)
